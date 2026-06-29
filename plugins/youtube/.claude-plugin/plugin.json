@@ -1,0 +1,9 @@
+{
+  "name": "youtube",
+  "description": "yt-dlp로 유튜브 영상을 검색·요약·다운로드하는 스킬. 수집(yt-dlp)과 가공(요약)을 분리하고, 멤버십 영상은 Firefox 전용 프로파일 쿠키로 인증한다.",
+  "version": "1.0.0",
+  "author": {
+    "name": "jueon.park",
+    "email": "bluegbgb@gmail.com"
+  }
+}
