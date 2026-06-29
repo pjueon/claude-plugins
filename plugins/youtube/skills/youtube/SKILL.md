@@ -59,21 +59,36 @@ description: >-
 > 쿠키는 수주~수개월 유지되며 사이트 재방문 시 자동 갱신된다. 만료되면 2단계 GUI 로그인만
 > 다시 한 번 하면 된다(headless로는 재로그인 불가).
 
-### 공통 쿠키 인자
+### 공통 인자 (쿠키 + JS 런타임) — `$COMMON`
 
-모든 yt-dlp 호출 앞에 아래 변수를 준비해 붙인다. `firefox:` 뒤에 **프로파일 디렉터리
-절대 경로**를 준다(끝에 `/` 포함 권장):
+YouTube는 영상 포맷을 내주기 전에 **JS "n 챌린지"** 를 요구한다. 이를 풀려면 (1) JS
+런타임과 (2) yt-dlp의 EJS 솔버 스크립트가 둘 다 있어야 한다. 따라서 **모든 yt-dlp
+호출**에 쿠키 + 아래 두 플래그를 함께 붙인다:
 
 ```bash
-COOKIES="--cookies-from-browser firefox:$YT_FIREFOX_PROFILE/"
+COMMON="--cookies-from-browser firefox:$YT_FIREFOX_PROFILE/ --js-runtimes node --remote-components ejs:github"
 ```
+
+- `--cookies-from-browser firefox:<프로파일경로>/` — 멤버십/일반 공통 인증. `firefox:`
+  뒤에 프로파일 디렉터리 절대 경로(끝에 `/` 권장).
+- `--js-runtimes node` — 시스템 PATH의 `node`를 챌린지 솔버 런타임으로 쓴다(node 설치돼
+  있음). **전체 경로를 쓰지 말 것**(경로 공백이 단어분리로 깨진다). 이름 `node`만 주면
+  yt-dlp가 PATH에서 `node.exe`를 찾는다.
+- `--remote-components ejs:github` — 챌린지 솔버 스크립트(EJS)를 GitHub에서 받아 캐시한다.
+  이게 없으면 `n challenge solving failed` → "Only images are available"로 실패한다.
+
+> 이 두 플래그가 없으면 인증이 통과해도(`members-only` 거부는 안 떠도) 포맷 추출이 실패해
+> `Requested format is not available`가 난다. 셋 다 항상 함께 쓴다.
+>
+> 사용 예: `yt-dlp $COMMON <기능별 인자> "URL"`. (`YT_FIREFOX_PROFILE` 경로에 공백이
+> 없다는 전제 — 있으면 배열 `"${COMMON[@]}"` 형태로 바꾼다.)
 
 (`YT_FIREFOX_PROFILE`이 비어 있으면 위 셋업을 먼저 안내한다.)
 
 ## 입력 판별
 
 - `youtube.com/watch?v=` · `youtu.be/` 단일 영상 URL → **내용 파악** 또는 **다운로드**
-- `youtube.com/playlist?list=` · `&list=` → 플레이리스트 (v1 범위 밖 — 필요하면 알린다)
+- `youtube.com/playlist?list=` · `&list=` → 플레이리스트 다운로드(기능 3-3, N번째부터/범위 지원)
 - URL이 아닌 자연어 → **검색**
 
 요청 동사로 의도를 가른다: "요약/정리/무슨 내용" → 내용 파악, "받아줘/다운로드/오디오" →
@@ -84,7 +99,7 @@ COOKIES="--cookies-from-browser firefox:$YT_FIREFOX_PROFILE/"
 키워드로 후보를 뽑아 제목·조회수·길이와 함께 보여준다. 메타는 `--print` 직출력.
 
 ```bash
-yt-dlp $COOKIES "ytsearch8:키워드" \
+yt-dlp $COMMON "ytsearch8:키워드" \
   --print "%(title)s | %(id)s | 조회수:%(view_count)s | %(duration_string)s | %(uploader)s" \
   --skip-download
 ```
@@ -100,7 +115,7 @@ yt-dlp $COOKIES "ytsearch8:키워드" \
 ### 2-1. 메타 직출력 (요약 머리말용)
 
 ```bash
-yt-dlp $COOKIES --skip-download \
+yt-dlp $COMMON --skip-download \
   --print "제목:%(title)s\n채널:%(uploader)s\n조회수:%(view_count)s\n업로드:%(upload_date)s\n길이:%(duration_string)s" \
   "URL"
 ```
@@ -111,10 +126,10 @@ yt-dlp $COOKIES --skip-download \
 
 ```bash
 # (a) 가용 자막 확인
-yt-dlp $COOKIES --list-subs --skip-download "URL"
+yt-dlp $COMMON --list-subs --skip-download "URL"
 
 # (b) 한국어/영어 수동 자막 우선, 없으면 자동생성까지 허용해 현재 폴더에 받기
-yt-dlp $COOKIES --skip-download \
+yt-dlp $COMMON --skip-download \
   --write-subs --write-auto-subs \
   --sub-langs "ko,en" --sub-format "vtt/srt/best" \
   -o "%(title)s.%(ext)s" "URL"
@@ -124,7 +139,7 @@ yt-dlp $COOKIES --skip-download \
 - **자막이 전혀 없으면** Whisper 폴백: 오디오만 받아 전사한다(추가 의존성·시간 소요가
   크므로, 진행 전 사용자에게 "자막이 없어 음성 전사를 시도할까요?"라고 확인한다).
   ```bash
-  yt-dlp $COOKIES -x --audio-format mp3 -o "%(title)s.%(ext)s" "URL"
+  yt-dlp $COMMON -x --audio-format mp3 -o "%(title)s.%(ext)s" "URL"
   # 이후 whisper / faster-whisper로 전사
   ```
 
@@ -137,15 +152,74 @@ yt-dlp $COOKIES --skip-download \
 
 저작권상 받을 권리가 있는 콘텐츠(본인 멤버십 포함) 전제로만 사용한다.
 
-```bash
-# 영상 (화질 지정, 현재 폴더에 저장)
-yt-dlp $COOKIES -S "res:1080" -o "%(title)s.%(ext)s" "URL"
+### 3-0. 백그라운드가 기본
 
-# 오디오만 mp3 추출
-yt-dlp $COOKIES -x --audio-format mp3 -o "%(title)s.%(ext)s" "URL"
+영상 다운로드는 오래 걸릴 수 있으므로 **Bash 도구의 `run_in_background: true`로 띄우는
+것을 기본**으로 한다. 시작했음을 사용자에게 알리고, 완료 알림이 오면 최종 경로를 보고한다.
+짧은 메타 조회·자막 받기 등은 포그라운드로 해도 된다.
+
+### 3-1. 기본 다운로드 (다국어 음성트랙 선호 순서 적용)
+
+영상에 여러 음성트랙(더빙)이 있을 때 **한국어 → 일본어 → 영어 → 그 외(원본/베스트)**
+순으로 고른다. `lang:` *정렬*은 듣지 않으므로, **언어 *필터* + 폴백 체인**으로 한다
+(`language^=` 은 `pt-BR` 같은 지역변형도 접두 매칭):
+
+```bash
+# 화질 1080p 이하, 음성트랙 ko>ja>en>기타 우선
+yt-dlp $COMMON \
+  -f "bv*[height<=1080]+ba[language^=ko]/bv*[height<=1080]+ba[language^=ja]/bv*[height<=1080]+ba[language^=en]/bv*[height<=1080]+ba/b[height<=1080]" \
+  -o "%(title)s.%(ext)s" "URL"
 ```
 
-- 화질은 `res:1080`/`res:720` 등으로 조절. 포맷 머지·오디오 추출에 `ffmpeg`가 쓰인다(설치됨).
+- 화질만 바꾸려면 `height<=720` 등으로. 단순 다운로드(트랙 신경 안 씀)면 기존처럼
+  `-S "res:1080"`만 써도 된다.
+- **사용자가 특정 언어를 지정하면** 그 언어를 체인 맨 앞에 둔다. 예: 프랑스어 우선 →
+  맨 앞에 `bv*+ba[language^=fr]/` 를 붙인다. "프랑스어 음성으로"처럼 단일 지정이면
+  `-f "bv*+ba[language^=fr]/bv*+ba"` 로 그 트랙만.
+- 가용 음성 언어를 먼저 보려면: `yt-dlp $COMMON -F "URL"` 출력의 `[ko]`,`[ja]` 등 태그
+  또는 `--print "%(language)s"`로 확인한다.
+
+### 3-2. 오디오만 추출
+
+```bash
+yt-dlp $COMMON -x --audio-format mp3 \
+  -f "ba[language^=ko]/ba[language^=ja]/ba[language^=en]/ba" \
+  -o "%(title)s.%(ext)s" "URL"
+```
+
+### 3-3. 재생목록 — N번째부터 / 범위
+
+`-I`(items)로 시작 지점·범위를 지정한다. 사용자가 "N번째부터"라고 하면 `-I N:`.
+
+```bash
+yt-dlp $COMMON -I 5:   -o "%(playlist_index)03d_%(title)s.%(ext)s" "PLAYLIST_URL"   # 5번째부터 끝까지
+yt-dlp $COMMON -I 5:10 -o "%(playlist_index)03d_%(title)s.%(ext)s" "PLAYLIST_URL"   # 5~10번째
+yt-dlp $COMMON -I 3,7,9 ...                                                          # 특정 항목만
+```
+
+- `%(playlist_index)03d_`로 순서 번호를 파일명 앞에 붙이면 정렬이 쉽다.
+- 항목이 많으면 시간이 오래 걸리니 **반드시 백그라운드로**.
+
+### 3-4. (옵션) 다국어 음성을 한 파일에 — 멀티오디오 트랙 mkv
+
+여러 음성트랙을 **모두 받아 하나의 멀티오디오 영상**으로 만들 수 있다. **기본이 아닌
+옵션**이며, 사용자가 명시적으로 원할 때만 쓴다. `--audio-multistreams`로 여러 오디오를
+머지하고 컨테이너는 **mkv 권장**(여러 트랙·코덱을 안전하게 담음; 언어 메타데이터 보존).
+
+```bash
+# ko + ja + en 3개 음성트랙을 한 mkv에 (맨 앞 트랙이 기본 트랙이 됨)
+yt-dlp $COMMON --audio-multistreams --merge-output-format mkv \
+  -f "bv*+ba[language^=ko]+ba[language^=ja]+ba[language^=en]" \
+  -o "%(title)s.%(ext)s" "URL"
+```
+
+- **난이도: 낮음.** 표준 플래그 조합으로 동작하며 mkv에 트랙별 언어가 들어간다.
+- **유일한 수고:** "전부 다" 받으려면 단일 와일드카드가 없어서, 먼저 `-F`/`--print
+  "%(language)s"`로 존재하는 언어를 열거한 뒤 `+ba[language^=..]`를 언어 수만큼 이어
+  붙여 셀렉터를 만들어야 한다.
+- 트랙이 늘수록 용량이 커진다. mp4도 다중 오디오가 되긴 하나 코덱 호환 이슈가 있어 mkv가 안전.
+
+> 모든 다운로드의 포맷 머지·오디오 추출·mkv muxing에 `ffmpeg`가 쓰인다(설치됨).
 
 ## 출력 규칙
 
@@ -162,11 +236,14 @@ yt-dlp $COOKIES -x --audio-format mp3 -o "%(title)s.%(ext)s" "URL"
   available to members`, HTTP 403 등): 쿠키 만료로 보고, 사전 준비 2단계(GUI 재로그인)를
   안내한다. headless로는 재로그인 불가.
 - **`YT_FIREFOX_PROFILE` 미설정**: "사전 준비" 셋업을 먼저 안내한다.
+- **JS 챌린지 실패** (`n challenge solving failed`, `Only images are available`,
+  `Requested format is not available`): 공통 인자의 `--js-runtimes node
+  --remote-components ejs:github`가 빠졌거나 node 미설치다. 두 플래그를 붙였는지 먼저
+  확인하고, `node --version`으로 런타임 존재를 본다.
 - **자막 없음** (`There are no subtitles`): 위 2-2 Whisper 폴백 여부를 사용자에게 확인.
 - 그 외 실패는 yt-dlp의 에러 원문을 그대로 인용해 보여주고, 단정하지 않는다.
 
 ## 주의
 
 - 다운로드는 본인이 저작권상 받을 권리가 있는 콘텐츠(본인 멤버십 포함) 전제로만 한다.
-- 댓글 수집·플레이리스트 일괄 처리·로컬 LLM 분업은 v1 범위 밖이다. 필요하면 사용자에게
-  알리고 별도로 확장한다.
+- 댓글 수집·로컬 LLM 분업은 범위 밖이다. 필요하면 사용자에게 알리고 별도로 확장한다.
