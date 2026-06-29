@@ -1,10 +1,10 @@
 {
-  "name": "myclaude",
+  "name": "jueon",
   "owner": {
     "name": "jueon.park",
     "email": "bluegbgb@gmail.com"
   },
-  "description": "개인용 Claude Code 플러그인 마켓플레이스",
+  "description": "jueon's Claude Code 플러그인 마켓플레이스",
   "plugins": [
     {
       "name": "tdd",
