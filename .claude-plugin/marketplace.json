@@ -15,6 +15,11 @@
       "name": "session-recall",
       "source": "./plugins/session-recall",
       "description": "cass CLI로 과거 AI 코딩 세션을 검색·회상하는 스킬"
+    },
+    {
+      "name": "nanobanana",
+      "source": "./plugins/nanobanana",
+      "description": "Antigravity CLI(agy)로 Google nano banana 이미지 생성 엔진을 호출해 이미지를 생성·편집하는 스킬"
     }
   ]
 }
