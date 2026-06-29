@@ -1,0 +1,9 @@
+{
+  "name": "brain-vault",
+  "description": "BRAIN_VAULT_PATH 환경변수로 사용자의 Brain Obsidian 볼트 경로를 크로스플랫폼으로 찾아 어디서든 노트를 검색·열람·편집하는 스킬",
+  "version": "1.0.0",
+  "author": {
+    "name": "jueon.park",
+    "email": "bluegbgb@gmail.com"
+  }
+}
