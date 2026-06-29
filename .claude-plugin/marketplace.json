@@ -1,0 +1,20 @@
+{
+  "name": "myclaude",
+  "owner": {
+    "name": "jueon.park",
+    "email": "bluegbgb@gmail.com"
+  },
+  "description": "개인용 Claude Code 플러그인 마켓플레이스",
+  "plugins": [
+    {
+      "name": "tdd",
+      "source": "./plugins/tdd",
+      "description": "TDD(RED→GREEN→REFACTOR) 오케스트레이션 스킬(tdd, tdd-loop)과 단계별 서브에이전트 모음"
+    },
+    {
+      "name": "session-recall",
+      "source": "./plugins/session-recall",
+      "description": "cass CLI로 과거 AI 코딩 세션을 검색·회상하는 스킬"
+    }
+  ]
+}

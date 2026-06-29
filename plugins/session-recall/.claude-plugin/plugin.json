@@ -1,0 +1,9 @@
+{
+  "name": "session-recall",
+  "description": "cass CLI로 과거 AI 코딩 에이전트 세션을 로컬에서 검색·회상하는 스킬",
+  "version": "1.0.0",
+  "author": {
+    "name": "jueon.park",
+    "email": "bluegbgb@gmail.com"
+  }
+}
