@@ -1,12 +1,12 @@
 ---
-name: code-study-tutor
-description: 지정한 Obsidian vault 폴더의 외부 커리큘럼·진도 파일을 읽어, 현재 프로젝트의 실제 코드로 한 번의 학습 세션을 진행하고 이해도·진도·세션 로그를 갱신한다. init 이후 반복 호출한다. 수동 호출 전용.
+name: code-study
+description: 지정한 Obsidian vault 폴더의 외부 커리큘럼·진도 파일을 읽어, 현재 프로젝트의 실제 코드로 한 번의 학습 세션을 진행하고 이해도·진도·세션 로그를 갱신한다. init-code-study 이후 반복 호출한다. 수동 호출 전용.
 argument-hint: "[선택: 특정 모듈/주제, 또는 '짧게'·'깊게']"
 disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion
 ---
 
-# code-study:tutor — 학습 세션 진행
+# code-study — 학습 세션 진행
 
 외부 상태 파일을 읽어 **한 번의 세션**을 진행하고, 끝에 상태를 갱신한다.
 스킬 본문에는 특정 언어/프레임워크를 하드코딩하지 않는다 — 모든 프로젝트별 지식은 외부 파일에서 온다.
@@ -20,8 +20,8 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion
    CFG="$HOME/.claude/code-study/config.json"
    if [ -f "$CFG" ]; then cat "$CFG"; else echo "NO_CONFIG"; fi
    ```
-   `NO_CONFIG`이면: "학습 저장 위치가 아직 설정되지 않았습니다. 먼저 `/code-study:init`을 실행하세요."라고 안내하고 종료.
-3. `$ROOT` = `<study_root>/<project_slug>/`. `$ROOT/config.md`가 **없으면**: "이 프로젝트는 아직 설계되지 않았습니다. 먼저 `/code-study:init`을 실행하세요."라고 안내하고 종료.
+   `NO_CONFIG`이면: "학습 저장 위치가 아직 설정되지 않았습니다. 먼저 `/init-code-study`를 실행하세요."라고 안내하고 종료.
+3. `$ROOT` = `<study_root>/<project_slug>/`. `$ROOT/config.md`가 **없으면**: "이 프로젝트는 아직 설계되지 않았습니다. 먼저 `/init-code-study`를 실행하세요."라고 안내하고 종료.
 
 ## 2. 상태 읽기 & 검증
 - `config.md`, `curriculum.md`, `progress.md`를 읽는다.
@@ -47,4 +47,4 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion
 3. **curriculum.md** 갱신: 다룬 모듈의 상태 마커(`☐`→`◐`→`☑`). 필요하면 **이해도에 맞춰 순서·내용을 조정**한다(동적 커리큘럼 — 이게 이 스킬의 핵심). 조정하면 그 이유를 로그에 남긴다.
 
 ## 6. 마무리
-이번에 배운 것 한 줄 요약 + 다음 추천 주제를 알리고, 다시 `/code-study:tutor`로 이어가면 된다고 안내한다. vault(저장 폴더) 커밋은 하지 않는다(사용자 몫).
+이번에 배운 것 한 줄 요약 + 다음 추천 주제를 알리고, 다시 `/code-study`로 이어가면 된다고 안내한다. 저장 폴더 커밋은 하지 않는다(사용자 몫).

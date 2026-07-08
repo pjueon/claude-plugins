@@ -1,12 +1,12 @@
 ---
-name: code-study-init
+name: init-code-study
 description: 현재(또는 인자로 지정한) 프로젝트를 분석해, 그 프로젝트의 언어·프레임워크를 배우기 위한 커리큘럼·설정을 사용자가 지정한 Obsidian vault 폴더의 외부 파일로 생성한다. 프로젝트당 한 번 실행하는 설계 단계. 수동 호출 전용.
 argument-hint: "[대상 프로젝트 경로 (생략 시 현재 프로젝트)]"
 disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion, Agent
 ---
 
-# code-study:init — 프로젝트별 학습 설계
+# init-code-study — 프로젝트별 학습 설계
 
 대상 프로젝트를 분석해 **외부 상태 파일**(config·curriculum·progress)을 사용자가 지정한 Obsidian vault 폴더에 만든다.
 스킬 본문에는 특정 언어/프레임워크를 하드코딩하지 않는다 — 대상 프로젝트가 무엇이든(TS·Rust·Go·C#…) 감지해서 맞춘다.
@@ -36,7 +36,7 @@ if [ -f "$CFG" ]; then cat "$CFG"; else echo "NO_CONFIG"; fi
 **상태 저장 루트** `$ROOT` = `<study_root>/<project_slug>/`.
 
 ## 3. 이미 초기화됐는지 확인
-`$ROOT/config.md`가 이미 있으면: "이미 초기화돼 있습니다"라고 알리고, 다시 설계할지(덮어쓰기)·아니면 `/code-study:tutor`로 바로 갈지 묻는다. 임의로 덮어쓰지 않는다.
+`$ROOT/config.md`가 이미 있으면: "이미 초기화돼 있습니다"라고 알리고, 다시 설계할지(덮어쓰기)·아니면 `/code-study`로 바로 갈지 묻는다. 임의로 덮어쓰지 않는다.
 
 ## 4. 스택 감지
 루트의 매니페스트/설정으로 언어·프레임워크·테스트러너·빌드도구를 판별한다. 흔한 신호:
@@ -68,4 +68,4 @@ frontmatter `type: code-study-curriculum`. 모듈 목록(M0..Mn), 각 모듈에 
 frontmatter `type: code-study-progress`, `last_session: null`. 본문: 진행 요약, 개념별 이해도 표(척도 🌱🌿🌳🍎), 미해결 질문, 다시 짚을 오해, 다음 세션 추천(첫 모듈).
 
 ## 8. 보고
-감지한 스택 요약 + 모듈 목록 + 저장 위치를 사용자에게 보고하고, **`/code-study:tutor`로 첫 세션을 시작**하라고 안내한다. 커밋은 하지 않는다(vault 커밋은 사용자 몫).
+감지한 스택 요약 + 모듈 목록 + 저장 위치를 사용자에게 보고하고, **`/code-study`로 첫 세션을 시작**하라고 안내한다. 커밋은 하지 않는다(저장 폴더 커밋은 사용자 몫).
