@@ -1,0 +1,9 @@
+{
+  "name": "code-study",
+  "description": "대상 프로젝트의 언어·프레임워크를 그 프로젝트의 실제 코드로 배우는 개인 튜터링 플러그인. init으로 프로젝트를 분석해 외부 커리큘럼 파일(Brain vault)을 만들고, tutor로 그 파일을 읽어 세션을 진행하며 진도·이해도를 기록한다.",
+  "version": "0.1.0",
+  "author": {
+    "name": "jueon.park",
+    "email": "bluegbgb@gmail.com"
+  }
+}
