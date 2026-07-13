@@ -181,7 +181,7 @@ def resolve_notification_type(payload):
 
 
 def process(payload, config):
-    """훅 payload 하나를 처리하고, 무엇을 했는지 기록한 record를 반환한다(디버그 로깅용)."""
+    """Process a single hook payload and return a record of what was done (for debug logging)."""
     record = {
         "hook_event_name": payload.get("hook_event_name"),
         "session_id": payload.get("session_id", "unknown"),
