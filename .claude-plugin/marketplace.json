@@ -35,6 +35,11 @@
       "name": "code-study",
       "source": "./plugins/code-study",
       "description": "대상 프로젝트의 언어·프레임워크를 그 프로젝트의 실제 코드로 배우는 튜터링 스킬(init-code-study·code-study). 커리큘럼·진도는 지정한 Obsidian vault 폴더의 외부 파일로 관리"
+    },
+    {
+      "name": "notice-me",
+      "source": "./plugins/notice-me",
+      "description": "Claude Code 창에 포커스가 없을 때 작업표시줄을 깜빡이거나 커스텀 명령어를 실행해 알려주는 Windows 전용 훅 플러그인"
     }
   ]
 }

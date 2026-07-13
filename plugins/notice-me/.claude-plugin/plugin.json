@@ -1,0 +1,9 @@
+{
+  "name": "notice-me",
+  "description": "포커스가 없을 때 작업표시줄을 깜빡이거나 사용자가 지정한 커스텀 명령어를 실행해 알려주는 Windows 전용 알림 플러그인",
+  "version": "1.0.0",
+  "author": {
+    "name": "jueon.park",
+    "email": "bluegbgb@gmail.com"
+  }
+}
