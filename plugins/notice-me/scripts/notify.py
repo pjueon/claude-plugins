@@ -18,6 +18,7 @@ DEFAULT_CONFIG = {
 CONFIG_PATH = os.path.expanduser("~/.claude/notice-me.json")
 
 TH32CS_SNAPPROCESS = 0x00000002
+GW_OWNER = 4
 FLASHW_TRAY = 0x00000002
 FLASHW_TIMERNOFG = 0x0000000C  # flash until the window comes to the foreground (MSDN FLASHWINFO)
 
@@ -86,9 +87,33 @@ def read_last_notified_ms(path):
         return None
 
 
-def write_last_notified_ms(path, now_ms):
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump({"lastNotifiedAtMs": now_ms}, f)
+def claim_notification_slot(path, debounce_ms):
+    """Atomically claim the right to fire, re-checking the debounce window against concurrent hook invocations."""
+    now_ms = int(time.time() * 1000)
+    payload = json.dumps({"lastNotifiedAtMs": now_ms}).encode("utf-8")
+
+    def try_create():
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            return False
+        with os.fdopen(fd, "wb") as f:
+            f.write(payload)
+        return True
+
+    if try_create():
+        return True, None
+
+    last_ms = read_last_notified_ms(path)
+    ms_since_last = now_ms - last_ms if last_ms is not None else None
+    if ms_since_last is not None and ms_since_last < debounce_ms:
+        return False, ms_since_last
+
+    try:
+        os.remove(path)
+    except OSError:
+        pass
+    return try_create(), ms_since_last
 
 
 def build_pid_to_ppid():
@@ -121,14 +146,25 @@ def build_ancestor_chain(pid):
     return chain
 
 
-def find_target_hwnd(ancestors):
+def find_target_hwnd(ancestors, foreground_hwnd):
     user32 = ctypes.windll.user32
+
+    if foreground_hwnd:
+        pid = wintypes.DWORD()
+        user32.GetWindowThreadProcessId(foreground_hwnd, ctypes.byref(pid))
+        if pid.value in ancestors:
+            return foreground_hwnd
+
     windows_by_pid = {}
 
     WNDENUMPROC = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
 
     def callback(hwnd, _lparam):
-        if user32.IsWindowVisible(hwnd) and user32.GetWindowTextLengthW(hwnd) > 0:
+        if (
+            user32.IsWindowVisible(hwnd)
+            and user32.GetWindowTextLengthW(hwnd) > 0
+            and not user32.GetWindow(hwnd, GW_OWNER)
+        ):
             pid = wintypes.DWORD()
             user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
             windows_by_pid.setdefault(pid.value, hwnd)
@@ -214,12 +250,20 @@ def process(payload, config):
         return record
 
     ancestors = build_ancestor_chain(os.getpid())
-    target_hwnd = find_target_hwnd(ancestors)
-    is_focused = target_hwnd is not None and get_foreground_window() == target_hwnd
+    foreground_hwnd = get_foreground_window()
+    target_hwnd = find_target_hwnd(ancestors, foreground_hwnd)
+    is_focused = target_hwnd is not None and foreground_hwnd == target_hwnd
     record["target_hwnd"] = target_hwnd
     record["is_focused"] = is_focused
     if is_focused:
         record["result"] = "focused_skip"
+        return record
+
+    claimed, ms_since_last = claim_notification_slot(status_path, config["debounceMs"])
+    if not claimed:
+        record["result"] = "debounced"
+        if ms_since_last is not None:
+            record["ms_since_last"] = ms_since_last
         return record
 
     flashed = bool(config["flashEnabled"] and target_hwnd)
@@ -231,7 +275,6 @@ def process(payload, config):
     for command in config["customCommands"]:
         subprocess.Popen(command, shell=True, cwd=cwd)
 
-    write_last_notified_ms(status_path, now_ms)
     record["result"] = "fired"
     return record
 
