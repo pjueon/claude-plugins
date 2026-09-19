@@ -1,16 +1,13 @@
 # AI Agent를 위한 규칙
 - 사용자와 항상 한국어 존댓말로 소통한다.
 - 커밋 메시지에 Co-Authored-by 라인을 추가하지 않는다.
-- 커밋 메시지는 한국어로 작성하고, 무슨 변경사항인지 쉽게 파악할 수 있게 가독성을 고려하여 작성한다.
-- 코드를 작성 시 아래 적힌 Andrej Karpathy의 가이드라인을 준수한다. 
+- 사용자가 요청하지 않는 한, 모든 산출물에 대해 Generated with Claude Code 같은 류의 문구 삽입을 금지한다. 
+- 커밋 메시지는 한국어로 작성하고, 가독성을 고려하여 작성한다. 의미 단위의 작은 커밋을 지향한다. 
+- 코드 작업 시 아래 적힌 Andrej Karpathy의 가이드라인을 준수한다. 
 
 ---
 
 ## Andrej Karpathy's Guidelines
-
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
-
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
 ### 1. Think Before Coding
 
@@ -67,7 +64,3 @@ For multi-step tasks, state a brief plan:
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
----
-
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
