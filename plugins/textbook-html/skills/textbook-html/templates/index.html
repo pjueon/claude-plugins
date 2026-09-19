@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!-- 표지 템플릿 — 교재 슬러그로 저장 위치는 docs/index.html.
+     <!-- ▣ -->  주석이 붙은 곳만 교재 내용으로 바꾼다.
+     #toc-list 와 #resume 는 book.js 가 BOOK 배열로 채우므로 비워 둔다. -->
+<html lang="ko" data-page="cover">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>교재 제목 — 부제</title><!-- ▣ -->
+<link rel="stylesheet" href="assets/book.css">
+</head>
+<body>
+
+<div class="cover">
+
+  <p class="kicker">누구를 위한 교재인가 한 줄</p><!-- ▣ -->
+  <h1 class="title">교재 제목</h1><!-- ▣ -->
+  <p class="sub">무엇을 어떤 예제로 어떻게 배우는지 두 줄.<br>
+  전체 몇 장짜리인지까지 밝힌다.</p><!-- ▣ -->
+
+  <p><a class="resume" id="resume" href="ch00.html">처음부터 읽기</a></p>
+
+  <hr>
+
+  <h2>이 교재는 이렇게 생겼습니다</h2>
+
+  <p>한 장(chapter)은 <b>여러 개의 화면</b>으로 나뉩니다. 화면은 <b>← → 방향키</b>나 아래쪽
+  버튼으로 넘깁니다. 어디까지 읽었는지는 이 브라우저에 저장되므로, 다음에 다시 열면
+  <b>이어서 읽기</b>가 나타납니다.</p>
+
+  <div class="box note">
+    <p class="box-t">읽는 방법</p>
+    <ul>
+      <li><b>접힌 상자</b>는 눌러서 펼치는 부분입니다. <b>더 깊이</b>는 처음 읽을 때 건너뛰어도
+      되고, <b>모범답안</b>은 스스로 해본 다음에 열어보세요.</li>
+      <li><b>퀴즈</b>는 반드시 풀어보세요. 해설에 본문에 없는 이야기가 들어 있습니다.</li>
+      <li>점선 밑줄이 그어진 <span class="term" data-term="sample">낱말</span>은
+      마우스를 올리면 뜻이 나옵니다.</li>
+      <li><b>Before / After</b> 탭이 있는 코드는 탭을 눌러 같은 자리에서 비교해 보세요.</li>
+    </ul>
+  </div>
+
+  <h2>학습 트랙 — 하나 골라서 시작하세요</h2>
+
+  <p>전체 분량은 <b>NN화면 / 약 N시간</b>입니다. 읽기만 하는 시간이 아니라
+  퀴즈와 과제까지 포함한 시간입니다.</p><!-- ▣ 커리큘럼 합계와 맞춘다 -->
+
+  <div class="track-grid"><!-- ▣ 전체 시간으로 나눈 트랙 3~4개 -->
+    <div class="track">
+      <h4>여유</h4>
+      <div class="big">N주</div>
+      <p>하루 30분, 매일<br>주 3.5시간</p>
+    </div>
+    <div class="track pick">
+      <h4>표준 (추천)</h4>
+      <div class="big">N주</div>
+      <p>평일 하루 1시간<br>주 5시간</p>
+    </div>
+    <div class="track">
+      <h4>단기 몰입</h4>
+      <div class="big">N주</div>
+      <p>하루 2~3시간<br>주 12시간</p>
+    </div>
+  </div>
+
+  <div class="box warn">
+    <p class="box-t">어떤 트랙이든</p>
+    <p>이 교재의 허리가 되는 장을 지목하고, 그 장에서는 속도를 늦추라고 알린다.</p><!-- ▣ -->
+  </div>
+
+  <h2>목차</h2>
+  <ul class="toc-list" id="toc-list"></ul>
+
+  <div class="box" style="margin-top:2rem">
+    <p class="box-t">이 교재를 다 읽으면</p>
+    <ol>
+      <li>기획서의 학습 목표를 독자 시점의 "할 수 있다"로 옮겨 적는다.</li><!-- ▣ -->
+    </ol>
+  </div>
+
+</div>
+
+<script src="assets/book.js"></script>
+</body>
+</html>
