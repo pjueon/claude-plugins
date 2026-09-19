@@ -3,21 +3,19 @@
 - 커밋 메시지에 Co-Authored-by 라인을 추가하지 않는다.
 - 사용자가 요청하지 않는 한, 모든 산출물에 대해 Generated with Claude Code 같은 류의 문구 삽입을 금지한다. 
 - 커밋 메시지는 한국어로 작성하고, 가독성을 고려하여 작성한다. 의미 단위의 작은 커밋을 지향한다. 
-- 코드 작업 시 아래 적힌 Andrej Karpathy의 가이드라인을 준수한다. 
+- 코드 작업 시 아래 적힌 코딩 가이드라인을 준수한다. 
 
 ---
 
-## Andrej Karpathy's Guidelines
+## Coding Guidelines
 
 ### 1. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
 Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
+- State your assumptions explicitly.
 - If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
 
 ### 2. Simplicity First
 
@@ -38,7 +36,6 @@ Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, sim
 When editing existing code:
 - Don't "improve" adjacent code, comments, or formatting.
 - Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
 - If you notice unrelated dead code, mention it - don't delete it.
 
 When your changes create orphans:
