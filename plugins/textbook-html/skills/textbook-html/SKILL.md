@@ -3,7 +3,7 @@ name: textbook-html
 description: >-
   주제·독자 배경·학습 시간을 받아 **커리큘럼을 먼저 잡고**, 장(HTML 파일 1개) ×
   화면(섹션) 구조의 **학습 교재/강의 자료**를 HTML 로 집필하는 도구. 동봉 런타임
-  (book.css/book.js)이 목차 사이드바·화면 넘김·진도 저장·퀴즈 채점·용어 툴팁·코드
+  (book.css/book.js)이 목차 사이드바·화면 넘김·진도 저장·퀴즈 채점·용어 툴팁·화면 참조 링크·코드
   하이라이팅을 맡고, 필요하면 그림·그래프·**인터랙티브 위젯**도 직접 만들어 넣습니다.
   코드뿐 아니라 수학·알고리즘·공학·업무 지식도 대상입니다. "이 주제로 교재 만들어줘",
   "학습 자료 만들어줘", "커리큘럼 짜줘", "다음 장 써줘" 처럼 사람이 명시적으로 부를 때만 씁니다.
@@ -32,7 +32,7 @@ docs/
   02-코드-정본.md     (코드가 장을 넘어 누적되는 교재만) 시그니처 고정
   index.html          표지 + 목차 + 학습 트랙
   ch00.html … chNN.html
-  _smoke.html         런타임 점검 35 단정
+  _smoke.html         런타임 점검 46 단정
   assets/book.css     동봉본. 손대지 않는다
   assets/book.js      동봉본. [교재별] 다섯 블록만 고친다
 ```
@@ -148,10 +148,10 @@ cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해
 | 파일 | 무엇 |
 |---|---|
 | `templates/assets/book.css` | 공통 스타일(라이트/다크). 색만 `:root` 변수로 조정 |
-| `templates/assets/book.js` | 런타임 — 목차·화면 넘김·진행률·퀴즈 채점·탭·툴팁·하이라이터·진도 |
+| `templates/assets/book.js` | 런타임 — 목차·화면 넘김·진행률·퀴즈 채점·탭·툴팁·화면 참조 링크(미리보기·돌아가기)·하이라이터·진도 |
 | `templates/ch-template.html` | **화면 서식의 진실 원천.** 쓸 수 있는 부품 전부 + 위젯 예시 |
 | `templates/index.html` | 표지·학습 트랙·목차 |
-| `templates/_smoke.html` | 런타임 점검 35 단정 |
+| `templates/_smoke.html` | 런타임 점검 46 단정 |
 | `references/plan-and-curriculum.md` | 기획서·커리큘럼 서식과 배분 기준 |
 | `references/authoring.md` | 장 집필 순서, 점검 명령, 자주 틀리는 것 |
 

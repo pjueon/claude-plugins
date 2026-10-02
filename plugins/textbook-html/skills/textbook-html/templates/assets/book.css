@@ -26,7 +26,7 @@
 
   --c-kw: #9c2f6f;
   --c-str: #2f6f4a;
-  --c-com: #8d8579;
+  --c-com: #746c60;
   --c-num: #a8571b;
   --c-fn: #2f5d8a;
   --c-dec: #7a5aa8;
@@ -61,7 +61,7 @@
 
     --c-kw: #e089b8;
     --c-str: #8fcfa5;
-    --c-com: #7d7a72;
+    --c-com: #918d84;
     --c-num: #dda15e;
     --c-fn: #8fbce8;
     --c-dec: #bfa2e8;
@@ -321,22 +321,66 @@ table { border-collapse: collapse; width: 100%; font-size: .9rem; }
 th, td { border: 1px solid var(--rule); padding: .5rem .7rem; text-align: left; vertical-align: top; }
 th { background: var(--bg-soft); font-weight: 700; color: var(--fg-strong); }
 
-/* 용어 툴팁 */
+/* 용어 툴팁 — 말풍선은 book.js 가 body 에 붙인 #tip 하나를 화면 안에 맞춰 띄운다
+   (::after 로 띄우면 줄 끝에서 페이지 가로 스크롤이 생기고 표·접힌 상자 안에서 잘린다) */
 .term {
   border-bottom: 1px dashed var(--accent); cursor: help;
-  position: relative; font-weight: 600;
+  font-weight: 600;
 }
-.term::after {
-  content: attr(data-def);
-  position: absolute; left: 0; top: calc(100% + .4rem); z-index: 30;
-  width: max-content; max-width: 20rem;
+#tip {
+  position: fixed; z-index: 70; left: 0; top: 0;
+  max-width: min(22rem, calc(100vw - 1rem));
   background: var(--fg-strong); color: var(--bg);
   font-size: .8rem; font-weight: 400; line-height: 1.6;
   padding: .5rem .7rem; border-radius: 8px;
-  opacity: 0; pointer-events: none; transition: opacity .15s;
-  box-shadow: var(--shadow); white-space: normal;
+  box-shadow: var(--shadow); pointer-events: none;
+  display: none;
 }
-.term:hover::after, .term:focus::after { opacity: 1; }
+#tip.on { display: block; }
+
+/* 화면 참조 링크와 미리보기 */
+a.xref { text-decoration: underline dotted; text-underline-offset: .2em; cursor: pointer; }
+a.xref:hover { text-decoration-style: solid; }
+#xpop {
+  position: fixed; z-index: 65; display: none;
+  width: min(42rem, calc(100vw - 1rem)); max-height: 70vh;
+  flex-direction: column;
+  background: var(--bg); border: 1px solid var(--rule); border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
+#xpop.on { display: flex; }
+#xpop .xpop-head {
+  display: flex; align-items: center; gap: .6rem; padding: .55rem .8rem;
+  border-bottom: 1px solid var(--rule); background: var(--bg-soft); border-radius: 12px 12px 0 0;
+  font-size: .82rem;
+}
+#xpop .xpop-head b { flex: 1; color: var(--fg-strong); }
+#xpop .xpop-head button {
+  background: var(--card); color: var(--fg); border: 1px solid var(--rule);
+  border-radius: 7px; padding: .2rem .6rem; font: inherit; font-size: .8rem; cursor: pointer;
+}
+#xpop .xpop-head button:hover { border-color: var(--accent); color: var(--accent); }
+#xpop .xpop-body { overflow: auto; padding: .9rem 1.1rem; font-size: .9rem; }
+#xpop .xpop-body .screen { display: block; animation: none; }
+#xpop .xpop-body h1 { font-size: 1.3rem; }
+#xpop .xpop-body h2 { font-size: 1.1rem; }
+
+/* 참조로 이동한 뒤 돌아가기 */
+#xback {
+  position: fixed; z-index: 46; bottom: 4.2rem; left: calc(var(--sidebar) + 1.2rem);
+  display: none; align-items: center; gap: .3rem;
+  background: var(--accent); color: #fff; border-radius: 999px;
+  box-shadow: var(--shadow); font-size: .84rem; font-weight: 700;
+}
+#xback.on { display: inline-flex; }
+#xback a, #xback button {
+  color: inherit; background: none; border: 0; font: inherit; cursor: pointer;
+  text-decoration: none; padding: .45rem .3rem .45rem .9rem;
+}
+#xback button { padding: .45rem .8rem .45rem .2rem; opacity: .8; }
+
+/* 모바일 목차를 열었을 때 본문을 덮는 막 */
+#toc-scrim { display: none; }
 
 /* 다이어그램 */
 figure.fig { margin: 1.6rem 0; text-align: center; }
@@ -463,20 +507,39 @@ figure.fig figcaption { font-size: .82rem; color: var(--muted); margin-top: .5re
 .chapter-end a span { display: block; font-size: .74rem; color: var(--muted); }
 
 @media (max-width: 900px) {
-  #toc { transform: translateX(-100%); transition: transform .2s ease; }
+  #toc { transform: translateX(-100%); transition: transform .2s ease; z-index: 62; }
   body.toc-open #toc { transform: none; }
-  #toc-toggle { display: block; }
-  #book { margin-left: 0; padding: 4rem 1.1rem 7rem; }
-  #nav { left: 0; padding: .5rem 1rem; }
+  body.toc-open #toc-scrim {
+    display: block; position: fixed; inset: 0; z-index: 61; background: rgba(0,0,0,.35);
+  }
+  /* 목차 버튼은 본문 글자를 가리지 않도록 하단 바 왼쪽에 둔다 */
+  #toc-toggle { display: block; top: auto; bottom: .5rem; left: .6rem; width: 2.2rem; height: 2.2rem; z-index: 63; }
+  #book { margin-left: 0; padding: 2rem 1.1rem 7rem; }
+  #nav { left: 0; padding: .5rem 1rem .5rem 3.4rem; }
+  #xback { left: 1rem; }
+  #toc ol.screens button { padding: .45rem 0; }
   h1 { font-size: 1.6rem; }
   h2 { font-size: 1.25rem; }
+  #xpop { left: .5rem !important; right: .5rem; bottom: .5rem; top: auto !important; width: auto; max-height: 75vh; }
+}
+
+@media (max-width: 600px) {
+  /* 그림은 줄이지 않고 그림 상자 안에서 가로로 민다 — 줄이면 글자가 6~7px 이 된다 */
+  figure.fig { overflow-x: auto; }
+  figure.fig svg { min-width: 34rem; }
+  /* 3열 이상인 표는 글자가 세로로 쪼개지지 않게 최소 폭을 두고 표 상자 안에서 민다 */
+  .table-wrap table:has(tr > :nth-child(3)) { min-width: 32rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .screen { animation: none; }
 }
 
 @media print {
-  #toc, #nav, #progress, #toc-toggle { display: none !important; }
+  #toc, #nav, #progress, #toc-toggle, #tip, #xpop, #xback, #toc-scrim { display: none !important; }
   #book { margin: 0; padding: 0; }
   .screen { display: block !important; page-break-after: always; }
-  details.fold { open: true; }
-  details.fold .fold-body { display: block !important; }
+  pre { white-space: pre-wrap; }
   body { font-size: 11pt; }
 }

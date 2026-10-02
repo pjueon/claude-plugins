@@ -1,7 +1,7 @@
 /* 학습 교재 런타임 — textbook-html 스킬 동봉본
    - 외부 의존 없음. file:// 로 열려도 동작한다 (fetch / module script 미사용)
    - 담당: 목차 사이드바, 화면 넘김, 진행률, 퀴즈 채점, Before/After 탭,
-           용어 툴팁, 코드 하이라이팅, 진도 저장
+           용어 툴팁, 화면 참조 링크(미리보기·돌아가기), 코드 하이라이팅, 진도 저장
    - 교재마다 고쳐야 하는 곳은 아래 [교재별] 다섯 블록뿐이다. 그 밖은 손대지 않는다. */
 (function () {
   'use strict';
@@ -33,8 +33,10 @@
 
   /* ── [교재별 4/5] 진도 저장 키 — 교재 슬러그를 접두어로 둔다 ─────
         file:// 에서는 로컬로 열린 모든 페이지가 저장소를 공유하므로,
-        접두어가 겹치면 다른 교재의 진도를 덮어쓴다. */
+        접두어가 겹치면 다른 교재의 진도를 덮어쓴다. 아래 세 키의 접두어를 함께 바꾼다. */
   var STORE_KEY = 'course:progress';
+  var NAV_KEY = 'course:nav';     // '다음 장'으로 넘어왔는지 (sessionStorage)
+  var BACK_KEY = 'course:back';   // 다른 장의 참조 링크를 누른 자리 (sessionStorage)
 
   /* ── 진도 저장 (file:// 에서는 모든 로컬 페이지가 저장소를 공유하므로
         키에 반드시 접두어를 붙인다) ──────────────────────────────── */
@@ -110,6 +112,129 @@
     });
   }
 
+  /* 말풍선은 body 에 하나만 두고 화면 안에 들어오게 자리를 잡는다.
+     마우스를 올리거나, 탭(포커스)하면 뜨고, 벗어나거나 Esc 를 누르면 닫힌다. */
+  var tip = null, tipFor = null;
+  function showTip(el) {
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.id = 'tip';
+      tip.setAttribute('role', 'tooltip');
+      document.body.appendChild(tip);
+    }
+    tip.textContent = el.getAttribute('data-def');
+    tip.classList.add('on');
+    tipFor = el;
+    var r = el.getBoundingClientRect();
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    var w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.max(8, Math.min(r.left, vw - w - 8));
+    var top = r.bottom + 6;
+    if (top + h > vh - 8 && r.top - h - 6 > 8) top = r.top - h - 6;
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  }
+  function hideTip() {
+    if (tip) tip.classList.remove('on');
+    tipFor = null;
+  }
+  function initTip() {
+    function termOf(e) { return e.target.closest ? e.target.closest('.term[data-def]') : null; }
+    document.addEventListener('mouseover', function (e) { var t = termOf(e); if (t) showTip(t); });
+    document.addEventListener('mouseout', function (e) {
+      var t = termOf(e);
+      if (t && t === tipFor && !t.contains(e.relatedTarget) && document.activeElement !== t) hideTip();
+    });
+    document.addEventListener('focusin', function (e) { var t = termOf(e); if (t) showTip(t); });
+    document.addEventListener('focusout', function (e) { if (termOf(e) === tipFor) hideTip(); });
+    window.addEventListener('scroll', hideTip, true);
+    window.addEventListener('resize', hideTip);
+  }
+
+  /* ── 화면 참조 링크 ──────────────────────────────────────────────
+     본문 텍스트에서 "N장 화면 M", "화면 N" 을 찾아 링크로 바꾼다(마크업 불필요).
+     코드, 이미 링크인 곳, kicker, 그림 안은 건드리지 않는다.
+     링크로 만들고 싶지 않은 자리는 <code> 로 감싸면 건너뛴다. */
+  var REF_RE = /(\d{1,2})장 화면 (\d{1,2})((?:\s?[·,~]\s?\d{1,2})*)|화면 (\d{1,2})(?!\d|개|화면)((?:\s?[·,~]\s?\d{1,2})*)/g;
+  var SKIP_SEL = 'pre, code, a, button, svg, .kicker, .term, .cap, script, style, #tip, #xpop';
+
+  function chapterOf(num) {
+    var id = 'ch' + (num < 10 ? '0' : '') + num;
+    for (var i = 0; i < BOOK.length; i++) if (BOOK[i].id === id && BOOK[i].ready) return BOOK[i];
+    return null;
+  }
+
+  function linkRefs(root, chId, screenCount) {
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue || !/화면 \d/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+        return n.parentNode.closest(SKIP_SEL) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+      }
+    }, false);
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(function (node) {
+      var text = node.nodeValue, frag = document.createDocumentFragment(), last = 0, m, changed = false;
+      REF_RE.lastIndex = 0;
+      function put(s) { if (s) frag.appendChild(document.createTextNode(s)); }
+      // "화면 4·6", "4장 화면 2~3" 처럼 이어지는 번호도 하나씩 링크로 만든다
+      function putList(prefix, first, tail, make) {
+        var a = make(parseInt(first, 10), prefix + first);
+        if (!a) return false;
+        frag.appendChild(a);
+        var re = /(\s?[·,~]\s?)(\d{1,2})/g, t;
+        while ((t = re.exec(tail))) {
+          put(t[1]);
+          var b = make(parseInt(t[2], 10), t[2]);
+          if (b) frag.appendChild(b); else put(t[2]);
+        }
+        return true;
+      }
+      while ((m = REF_RE.exec(text))) {
+        var start = m.index;
+        if (m[1]) {
+          var ch = chapterOf(parseInt(m[1], 10));
+          if (!ch) continue;
+          put(text.slice(last, start));
+          var sameCh = ch.id === chId;
+          putList(m[1] + '장 화면 ', m[2], m[3] || '', function (n, label) {
+            if (n < 1 || n > ch.screens) return null;
+            return sameCh ? makeXref(n, label) : makeChRef(ch, n, label);
+          });
+        } else {
+          if (!screenCount) continue;
+          put(text.slice(last, start));
+          if (!putList('화면 ', m[4], m[5] || '', function (n, label) {
+            return (n >= 1 && n <= screenCount) ? makeXref(n, label) : null;
+          })) put(m[0]);
+        }
+        last = REF_RE.lastIndex;
+        changed = true;
+      }
+      if (!changed) return;
+      put(text.slice(last));
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+
+  function makeXref(n, label) {
+    var a = document.createElement('a');
+    a.className = 'xref';
+    a.href = '#s' + n;
+    a.setAttribute('data-screen', n);
+    a.textContent = label;
+    return a;
+  }
+  function makeChRef(ch, n, label) {
+    var a = document.createElement('a');
+    a.className = 'xref xref-ch';
+    a.href = ch.id + '.html#s' + n;
+    a.textContent = label;
+    a.title = ch.num + ' 화면 ' + n + '(으)로 이동합니다';
+    return a;
+  }
+
   /* ── Before / After 탭 ──────────────────────────────────────── */
   function initTabs(root) {
     Array.prototype.forEach.call(root.querySelectorAll('.tabs'), function (wrap) {
@@ -157,7 +282,15 @@
           why.textContent = li.dataset.why;
           li.appendChild(why);
         }
-        li.addEventListener('click', function () {
+        // 키보드로도 고를 수 있게 한다(Tab 으로 옮기고 Enter·Space 로 고른다)
+        li.setAttribute('tabindex', '0');
+        li.setAttribute('role', 'button');
+        li.addEventListener('keydown', function (e) {
+          if (e.target !== li) return;
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.click(); }
+        });
+        li.addEventListener('click', function (e) {
+          if (e.target.closest && e.target.closest('a, .term')) return;
           if (quiz.classList.contains('done')) return;
           var picked = i + 1;
           li.classList.add('picked', picked === answer ? 'pick-good' : 'pick-bad');
@@ -236,6 +369,12 @@
     toggle.addEventListener('click', function () { document.body.classList.toggle('toc-open'); });
     document.body.appendChild(toggle);
 
+    // 모바일에서 목차를 열면 본문을 막으로 덮고, 막을 누르면 닫는다
+    var scrim = document.createElement('div');
+    scrim.id = 'toc-scrim';
+    scrim.addEventListener('click', function () { document.body.classList.remove('toc-open'); });
+    document.body.appendChild(scrim);
+
     return toc;
   }
 
@@ -293,17 +432,28 @@
 
     // writeLast=false 이면 이 장의 진도만 남기고 '이어서 읽기' 기준점은 건드리지 않는다.
     // (#s5 같은 딥링크로 특정 화면만 열어볼 때 기준점이 그리로 끌려가는 것을 막는다)
-    function remember(writeLast) {
+    // 완독(✓)은 직전 화면에서 '다음'으로 마지막 화면에 왔을 때만 남긴다.
+    function remember(writeLast, finished) {
       var p = loadProgress();
       var rec = p[chId] || {};
       rec.screen = cur;
-      if (cur === screens.length - 1) rec.done = true;
+      if (finished && cur === screens.length - 1) rec.done = true;
       p[chId] = rec;
       if (writeLast) p['_last'] = { id: chId, screen: cur };
       saveProgress(p);
     }
 
-    function show(i, silentLast) {
+    // 주소의 #sN 을 지금 화면에 맞춰 두면 새로고침·북마크가 그 화면으로 돌아온다.
+    // push=true 이면 기록을 하나 쌓아 브라우저의 뒤로 가기로 돌아올 수 있게 한다.
+    function setHash(push) {
+      var h = '#s' + (cur + 1);
+      try {
+        if (push) history.pushState(null, '', h);
+        else if (location.hash !== h) history.replaceState(null, '', h);
+      } catch (e) { /* file:// 에서 막히는 브라우저가 있어도 화면 넘김은 동작한다 */ }
+    }
+
+    function show(i, silentLast, finished, push) {
       cur = Math.max(0, Math.min(screens.length - 1, i));
       Array.prototype.forEach.call(screens, function (s, j) {
         s.classList.toggle('is-active', j === cur);
@@ -319,8 +469,20 @@
       prevBtn.textContent = (cur === 0 && prevCh) ? '← ' + prevCh.num : '← 이전';
       nextBtn.textContent = (cur === screens.length - 1 && nextCh) ? nextCh.num + ' →' : '다음 →';
 
-      window.scrollTo(0, 0);
-      remember(!silentLast);
+      // 사이드바의 현재 화면 항목이 목차 밖으로 밀려나 있으면 보이게 굴린다(본문은 굴리지 않는다)
+      var on = screenItems[cur];
+      if (on) {
+        var top = on.offsetTop, bottom = top + on.offsetHeight;
+        if (top < toc.scrollTop + 40 || bottom > toc.scrollTop + toc.clientHeight - 40) {
+          toc.scrollTop = top - toc.clientHeight / 3;
+        }
+      }
+
+      hideTip();
+      closePop();
+      try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch (e) { window.scrollTo(0, 0); }
+      setHash(push);
+      remember(!silentLast, finished);
     }
 
     prevBtn.addEventListener('click', function () {
@@ -328,26 +490,152 @@
       show(cur - 1);
     });
     nextBtn.addEventListener('click', function () {
-      if (cur === screens.length - 1) { if (nextCh) location.href = nextCh.id + '.html'; return; }
-      show(cur + 1);
+      if (cur === screens.length - 1) {
+        if (nextCh) {
+          // 다음 장은 늘 첫 화면부터 연다. 차례대로 넘어온 것이므로 '이어서 읽기' 기준점도 옮긴다.
+          try { sessionStorage.setItem(NAV_KEY, 'seq'); } catch (e) {}
+          location.href = nextCh.id + '.html#s1';
+        }
+        return;
+      }
+      show(cur + 1, false, cur + 1 === screens.length - 1);
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.altKey || e.ctrlKey || e.metaKey) return;
-      var t = e.target.tagName;
-      if (t === 'INPUT' || t === 'TEXTAREA') return;
-      if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); nextBtn.click(); }
-      if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevBtn.click(); }
+      if (e.key === 'Escape') { hideTip(); closePop(); document.body.classList.remove('toc-open'); return; }
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.repeat || e.defaultPrevented) return;
+      var t = e.target;
+      if (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || (t.closest && t.closest('[role=slider]'))) return;
+      // PageUp/PageDown 은 긴 화면을 굴리는 데 쓰이므로 가로채지 않는다
+      if (e.key === 'ArrowRight') { e.preventDefault(); nextBtn.click(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); prevBtn.click(); }
     });
 
     highlightAll(book);
     initTerms(book);
+    linkRefs(book, chId, screens.length);
     initTabs(book);
     initQuiz(book);
+    initTip();
+
+    /* ── 화면 참조: 같은 장이면 미리보기, 이동하면 돌아가기 버튼 ── */
+    var pop = null, popTimer = null, popFrom = null;
+    function closePop() {
+      clearTimeout(popTimer);
+      if (pop) pop.classList.remove('on');
+      popFrom = null;
+    }
+    function openPop(a, pinned) {
+      var n = parseInt(a.getAttribute('data-screen'), 10);
+      var target = screens[n - 1];
+      if (!target) return;
+      if (!pop) {
+        pop = document.createElement('div');
+        pop.id = 'xpop';
+        pop.setAttribute('role', 'dialog');
+        pop.innerHTML = '<div class="xpop-head"><b></b><button type="button" class="go">이 화면으로 이동</button>' +
+          '<button type="button" class="x" aria-label="닫기">✕</button></div><div class="xpop-body"></div>';
+        document.body.appendChild(pop);
+        pop.querySelector('.x').addEventListener('click', closePop);
+        pop.querySelector('.go').addEventListener('click', function () { jumpTo(parseInt(pop.dataset.screen, 10)); });
+        pop.addEventListener('mouseenter', function () { clearTimeout(popTimer); });
+        pop.addEventListener('mouseleave', function () { if (!pop.dataset.pinned) popTimer = setTimeout(closePop, 250); });
+      }
+      if (n - 1 === cur) return;
+      pop.dataset.screen = n;
+      pop.dataset.pinned = pinned ? '1' : '';
+      pop.querySelector('.xpop-head b').textContent = '화면 ' + n + ' · ' + titles[n - 1];
+      var body = pop.querySelector('.xpop-body');
+      body.innerHTML = '';
+      var clone = target.cloneNode(true);
+      clone.classList.add('is-active');
+      Array.prototype.forEach.call(clone.querySelectorAll('[id]'), function (x) { x.removeAttribute('id'); });
+      body.appendChild(clone);
+      body.scrollTop = 0;
+      pop.classList.add('on');
+      popFrom = a;
+      // 링크 아래(자리가 없으면 위)에 띄운다. 좁은 화면에서는 CSS 가 아래쪽 시트로 고정한다.
+      var r = a.getBoundingClientRect();
+      var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+      var w = pop.offsetWidth, h = pop.offsetHeight;
+      var left = Math.max(8, Math.min(r.left, vw - w - 8));
+      var top = r.bottom + 8;
+      if (top + h > vh - 8) top = Math.max(8, r.top - h - 8);
+      pop.style.left = left + 'px';
+      pop.style.top = top + 'px';
+    }
+
+    var back = null;
+    function showBack(label, onBack) {
+      if (!back) {
+        back = document.createElement('div');
+        back.id = 'xback';
+        back.innerHTML = '<a href="#"></a><button type="button" aria-label="돌아가기 버튼 닫기">✕</button>';
+        document.body.appendChild(back);
+        back.querySelector('button').addEventListener('click', function () { back.classList.remove('on'); });
+      }
+      var link = back.querySelector('a');
+      link.textContent = '← ' + label + '(으)로 돌아가기';
+      link.onclick = function (e) { e.preventDefault(); back.classList.remove('on'); onBack(); };
+      back.classList.add('on');
+    }
+
+    function jumpTo(n) {
+      var from = cur;
+      show(n - 1, false, false, true);
+      showBack('화면 ' + (from + 1), function () { show(from, false, false, true); });
+    }
+
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a.xref');
+      if (!a) return;
+      if (a.classList.contains('xref-ch')) {
+        try { sessionStorage.setItem(BACK_KEY, JSON.stringify({ id: chId, num: meta.num, screen: cur + 1 })); } catch (err) {}
+        return;  // 다른 장은 그대로 이동한다
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      // 같은 장: 첫 클릭은 미리보기를 고정해서 열고, 미리보기 안의 '이동' 버튼으로 넘어간다
+      if (pop && pop.classList.contains('on') && popFrom === a && pop.dataset.pinned) closePop();
+      else openPop(a, true);
+    }, true);
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+      document.addEventListener('mouseover', function (e) {
+        var a = e.target.closest && e.target.closest('a.xref[data-screen]');
+        if (!a || a === popFrom) return;
+        clearTimeout(popTimer);
+        popTimer = setTimeout(function () { openPop(a, false); }, 350);
+      });
+      document.addEventListener('mouseout', function (e) {
+        var a = e.target.closest && e.target.closest('a.xref[data-screen]');
+        if (!a || (pop && pop.contains(e.relatedTarget))) return;
+        clearTimeout(popTimer);
+        if (pop && !pop.dataset.pinned) popTimer = setTimeout(closePop, 250);
+      });
+    }
+    document.addEventListener('mousedown', function (e) {
+      if (pop && pop.classList.contains('on') && !pop.contains(e.target) && !(e.target.closest && e.target.closest('a.xref'))) closePop();
+    });
+
+    // 브라우저의 뒤로/앞으로 가기로 #sN 이 바뀌면 그 화면을 보인다
+    window.addEventListener('popstate', function () {
+      var m = /^#s(\d+)$/.exec(location.hash);
+      if (m) show(parseInt(m[1], 10) - 1);
+      if (back) back.classList.remove('on');
+    });
+    window.addEventListener('hashchange', function () {
+      var m = /^#s(\d+)$/.exec(location.hash);
+      if (m && parseInt(m[1], 10) - 1 !== cur) show(parseInt(m[1], 10) - 1);
+    });
+    window.addEventListener('beforeprint', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('details.fold'), function (d) { d.open = true; });
+    });
 
     // 시작 화면 결정: #last → 마지막, #s3 → 3번째, 그 외에는 저장된 진도
     var start = 0;
     var hash = location.hash;
+    var seq = false;
+    try { seq = sessionStorage.getItem(NAV_KEY) === 'seq'; sessionStorage.removeItem(NAV_KEY); } catch (e) {}
     if (hash === '#last') {
       start = screens.length - 1;
     } else if (/^#s\d+$/.test(hash)) {
@@ -356,7 +644,16 @@
       var saved = loadProgress()[chId];
       if (saved && typeof saved.screen === 'number') start = saved.screen;
     }
-    show(start, !!hash);
+    show(start, !!hash && !seq);
+
+    // 다른 장의 참조 링크로 왔으면 원래 자리로 돌아가는 버튼을 띄운다
+    try {
+      var from = JSON.parse(sessionStorage.getItem(BACK_KEY) || 'null');
+      sessionStorage.removeItem(BACK_KEY);
+      if (from && from.id !== chId) {
+        showBack(from.num + ' 화면 ' + from.screen, function () { location.href = from.id + '.html#s' + from.screen; });
+      }
+    } catch (e) {}
   }
 
   /* ── 표지(index.html) 초기화 ────────────────────────────────── */
@@ -409,6 +706,7 @@
     initTerms(document);
     initTabs(document);
     initQuiz(document);
+    initTip();
   }
 
   document.addEventListener('DOMContentLoaded', function () {
