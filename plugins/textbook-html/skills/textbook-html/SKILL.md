@@ -39,7 +39,7 @@ authoring/              집필에 필요한 저자용 문서. 독자에게 나�
   01-커리큘럼.md        장별 항목 · 화면 수 · 시간 (집필 전)
   02-코드-정본.md       (코드가 장을 넘어 누적되는 교재만) 시그니처 고정
   03-진행-장부.md       장 사이 약속·용어 정의 기록 (집필 에이전트 간 인계)
-  _smoke.html           런타임 점검 46 단정 (../docs/assets 를 참조)
+  _smoke.html           런타임 점검 47 단정 (../docs/assets 를 참조)
 ```
 
 `docs/` 에는 독자가 읽을 파일만 둔다. 기획서·커리큘럼·점검 페이지가 섞여 있으면
@@ -154,10 +154,10 @@ cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해
 | 파일 | 무엇 |
 |---|---|
 | `templates/assets/book.css` | 공통 스타일(라이트/다크). 색만 `:root` 변수로 조정 |
-| `templates/assets/book.js` | 런타임 — 목차·화면 넘김·진행률·퀴즈 채점·탭·툴팁·화면 참조 링크(미리보기·돌아가기)·하이라이터·진도 |
+| `templates/assets/book.js` | 런타임 — 목차·화면 넘김·진행률·퀴즈 채점·탭·툴팁·화면 참조 링크(이동·돌아가기)·하이라이터·진도 |
 | `templates/ch-template.html` | **화면 서식의 진실 원천.** 쓸 수 있는 부품 전부 + 위젯 예시 |
 | `templates/index.html` | 표지·학습 트랙·목차 |
-| `templates/_smoke.html` | 런타임 점검 46 단정 |
+| `templates/_smoke.html` | 런타임 점검 47 단정 |
 | `references/plan-and-curriculum.md` | 기획서·커리큘럼 서식과 배분 기준 |
 | `references/authoring.md` | 장 집필 순서, 점검 명령, 자주 틀리는 것 (집필·리뷰 에이전트용) |
 | `references/orchestration.md` | 오케스트레이터 루프, 진행 장부, 병렬화 조건 |

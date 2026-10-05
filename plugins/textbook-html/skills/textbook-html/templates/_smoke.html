@@ -80,14 +80,17 @@ window.addEventListener('load', function () {
   term.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
   ok('툴팁 닫힘', !!tip && !tip.classList.contains('on'));
 
-  // 화면 참조 링크와 미리보기
+  // 화면 참조 링크 — 같은 장은 바로 이동하고 돌아가기 버튼이 뜬다
   var xref = screens[0].querySelector('a.xref[data-screen]');
   ok('"화면 N" 자동 링크', !!xref && xref.textContent === '화면 2' && xref.getAttribute('href') === '#s2');
   ok('code 안은 링크로 바꾸지 않음', !screens[0].querySelector('code a.xref'));
+  ok('미리보기 팝업 없음', !document.getElementById('xpop'));
   if (xref) xref.click();
-  var xpop = document.getElementById('xpop');
-  ok('미리보기 열림', !!xpop && xpop.classList.contains('on') && !!xpop.querySelector('.xpop-body .screen'));
-  ok('미리보기는 화면을 옮기지 않음', screens[0].classList.contains('is-active'));
+  ok('참조를 누르면 그 화면으로 이동', screens[1].classList.contains('is-active') && !screens[0].classList.contains('is-active'));
+  var xback = document.getElementById('xback');
+  ok('돌아가기 버튼 표시', !!xback && xback.classList.contains('on') && xback.textContent.indexOf('화면 1') > -1);
+  if (xback) xback.querySelector('a').click();
+  ok('돌아가기로 원래 화면 복귀', screens[0].classList.contains('is-active') && !xback.classList.contains('on'));
   ok('주소에 현재 화면 #s1', location.hash === '#s1', location.hash);
 
   // 다음 화면 이동
@@ -95,7 +98,6 @@ window.addEventListener('load', function () {
   ok('2번 화면 활성', screens[1].classList.contains('is-active') && !screens[0].classList.contains('is-active'));
   ok('카운터 갱신', nav.querySelector('.cnt').textContent === '2 / 3', nav.querySelector('.cnt').textContent);
   ok('사이드바 현재 화면 표시', toc.querySelectorAll('ol.screens > li')[1].classList.contains('on'));
-  ok('화면을 넘기면 미리보기 닫힘', !!xpop && !xpop.classList.contains('on'));
   ok('주소 #s2 로 갱신', location.hash === '#s2', location.hash);
 
   // 탭

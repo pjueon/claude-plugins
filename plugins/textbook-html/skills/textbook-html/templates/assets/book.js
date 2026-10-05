@@ -1,7 +1,7 @@
 /* 학습 교재 런타임 — textbook-html 스킬 동봉본
    - 외부 의존 없음. file:// 로 열려도 동작한다 (fetch / module script 미사용)
    - 담당: 목차 사이드바, 화면 넘김, 진행률, 퀴즈 채점, Before/After 탭,
-           용어 툴팁, 화면 참조 링크(미리보기·돌아가기), 코드 하이라이팅, 진도 저장
+           용어 툴팁, 화면 참조 링크(이동·돌아가기), 코드 하이라이팅, 진도 저장
    - 교재마다 고쳐야 하는 곳은 아래 [교재별] 다섯 블록뿐이다. 그 밖은 손대지 않는다. */
 (function () {
   'use strict';
@@ -156,7 +156,7 @@
      코드, 이미 링크인 곳, kicker, 그림 안은 건드리지 않는다.
      링크로 만들고 싶지 않은 자리는 <code> 로 감싸면 건너뛴다. */
   var REF_RE = /(\d{1,2})장 화면 (\d{1,2})((?:\s?[·,~]\s?\d{1,2})*)|화면 (\d{1,2})(?!\d|개|화면)((?:\s?[·,~]\s?\d{1,2})*)/g;
-  var SKIP_SEL = 'pre, code, a, button, svg, .kicker, .term, .cap, script, style, #tip, #xpop';
+  var SKIP_SEL = 'pre, code, a, button, svg, .kicker, .term, .cap, script, style, #tip';
 
   function chapterOf(num) {
     var id = 'ch' + (num < 10 ? '0' : '') + num;
@@ -479,7 +479,6 @@
       }
 
       hideTip();
-      closePop();
       try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch (e) { window.scrollTo(0, 0); }
       setHash(push);
       remember(!silentLast, finished);
@@ -502,7 +501,7 @@
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { hideTip(); closePop(); document.body.classList.remove('toc-open'); return; }
+      if (e.key === 'Escape') { hideTip(); document.body.classList.remove('toc-open'); return; }
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.repeat || e.defaultPrevented) return;
       var t = e.target;
       if (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || (t.closest && t.closest('[role=slider]'))) return;
@@ -518,53 +517,7 @@
     initQuiz(book);
     initTip();
 
-    /* ── 화면 참조: 같은 장이면 미리보기, 이동하면 돌아가기 버튼 ── */
-    var pop = null, popTimer = null, popFrom = null;
-    function closePop() {
-      clearTimeout(popTimer);
-      if (pop) pop.classList.remove('on');
-      popFrom = null;
-    }
-    function openPop(a, pinned) {
-      var n = parseInt(a.getAttribute('data-screen'), 10);
-      var target = screens[n - 1];
-      if (!target) return;
-      if (!pop) {
-        pop = document.createElement('div');
-        pop.id = 'xpop';
-        pop.setAttribute('role', 'dialog');
-        pop.innerHTML = '<div class="xpop-head"><b></b><button type="button" class="go">이 화면으로 이동</button>' +
-          '<button type="button" class="x" aria-label="닫기">✕</button></div><div class="xpop-body"></div>';
-        document.body.appendChild(pop);
-        pop.querySelector('.x').addEventListener('click', closePop);
-        pop.querySelector('.go').addEventListener('click', function () { jumpTo(parseInt(pop.dataset.screen, 10)); });
-        pop.addEventListener('mouseenter', function () { clearTimeout(popTimer); });
-        pop.addEventListener('mouseleave', function () { if (!pop.dataset.pinned) popTimer = setTimeout(closePop, 250); });
-      }
-      if (n - 1 === cur) return;
-      pop.dataset.screen = n;
-      pop.dataset.pinned = pinned ? '1' : '';
-      pop.querySelector('.xpop-head b').textContent = '화면 ' + n + ' · ' + titles[n - 1];
-      var body = pop.querySelector('.xpop-body');
-      body.innerHTML = '';
-      var clone = target.cloneNode(true);
-      clone.classList.add('is-active');
-      Array.prototype.forEach.call(clone.querySelectorAll('[id]'), function (x) { x.removeAttribute('id'); });
-      body.appendChild(clone);
-      body.scrollTop = 0;
-      pop.classList.add('on');
-      popFrom = a;
-      // 링크 아래(자리가 없으면 위)에 띄운다. 좁은 화면에서는 CSS 가 아래쪽 시트로 고정한다.
-      var r = a.getBoundingClientRect();
-      var vw = document.documentElement.clientWidth, vh = window.innerHeight;
-      var w = pop.offsetWidth, h = pop.offsetHeight;
-      var left = Math.max(8, Math.min(r.left, vw - w - 8));
-      var top = r.bottom + 8;
-      if (top + h > vh - 8) top = Math.max(8, r.top - h - 8);
-      pop.style.left = left + 'px';
-      pop.style.top = top + 'px';
-    }
-
+    /* ── 화면 참조: 같은 장이면 바로 이동하고, 돌아가기 버튼을 띄운다 ── */
     var back = null;
     function showBack(label, onBack) {
       if (!back) {
@@ -595,27 +548,9 @@
       }
       e.preventDefault();
       e.stopPropagation();
-      // 같은 장: 첫 클릭은 미리보기를 고정해서 열고, 미리보기 안의 '이동' 버튼으로 넘어간다
-      if (pop && pop.classList.contains('on') && popFrom === a && pop.dataset.pinned) closePop();
-      else openPop(a, true);
+      var n = parseInt(a.getAttribute('data-screen'), 10);
+      if (n - 1 !== cur) jumpTo(n);  // 같은 장: 바로 이동하고 돌아가기 버튼을 띄운다
     }, true);
-    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
-      document.addEventListener('mouseover', function (e) {
-        var a = e.target.closest && e.target.closest('a.xref[data-screen]');
-        if (!a || a === popFrom) return;
-        clearTimeout(popTimer);
-        popTimer = setTimeout(function () { openPop(a, false); }, 350);
-      });
-      document.addEventListener('mouseout', function (e) {
-        var a = e.target.closest && e.target.closest('a.xref[data-screen]');
-        if (!a || (pop && pop.contains(e.relatedTarget))) return;
-        clearTimeout(popTimer);
-        if (pop && !pop.dataset.pinned) popTimer = setTimeout(closePop, 250);
-      });
-    }
-    document.addEventListener('mousedown', function (e) {
-      if (pop && pop.classList.contains('on') && !pop.contains(e.target) && !(e.target.closest && e.target.closest('a.xref'))) closePop();
-    });
 
     // 브라우저의 뒤로/앞으로 가기로 #sN 이 바뀌면 그 화면을 보인다
     window.addEventListener('popstate', function () {
