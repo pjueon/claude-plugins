@@ -14,8 +14,8 @@ description: >-
 **대상:** $ARGUMENTS  *(주제 + 독자 배경 + 쓸 수 있는 학습 시간)*
 
 목표는 하나다 — **혼자 읽어도 이해되는, 친절한 학습 자료.** 주제 하나를 **여러 장짜리
-교재 한 권**으로 만든다. 커리큘럼을 먼저 잡고, 장을 하나씩 집필하고, 장마다 헤드리스
-브라우저로 점검한다. 산출물(`docs/`)과 집필용 문서(`authoring/`)는 폴더를 나눠 커밋하며, 장이 추가되며 자라는 자산이다.
+교재 한 권**으로 만든다. 커리큘럼을 먼저 잡고, 이후 집필은 메인이 오케스트레이터가 되어
+집필·리뷰 에이전트에 장 단위로 맡긴다. 산출물(`docs/`)과 집필용 문서(`authoring/`)는 폴더를 나눠 커밋하며, 장이 추가되며 자라는 자산이다.
 
 주제는 코드에 한정되지 않는다 — **수학·알고리즘·공학·업무 지식**도 대상이다.
 문서와 교재 본문은 한국어 존댓말로 쓴다(코드·수식·식별자 인용은 원문 그대로).
@@ -38,6 +38,7 @@ authoring/              집필에 필요한 저자용 문서. 독자에게 나�
   00-기획.md            독자·학습목표·관통 예제·형식 결정 (집필 전)
   01-커리큘럼.md        장별 항목 · 화면 수 · 시간 (집필 전)
   02-코드-정본.md       (코드가 장을 넘어 누적되는 교재만) 시그니처 고정
+  03-진행-장부.md       장 사이 약속·용어 정의 기록 (집필 에이전트 간 인계)
   _smoke.html           런타임 점검 46 단정 (../docs/assets 를 참조)
 ```
 
@@ -76,8 +77,8 @@ authoring/              집필에 필요한 저자용 문서. 독자에게 나�
 
 ### 진행 게이트
 
-- **R8** **한 번에 한 장씩** 쓰고 멈춘다(15장을 몰아 쓰면 뒤로 갈수록 앞장과 어긋난다).
-  **점검을 통과하지 않은 장을 완료로 보고하지 않는다.**
+- **R8** **장 단위로 집필→리뷰→커밋**하고, 기본은 순차다(뒷장이 앞장·약속과 어긋나지 않게).
+  의존이 없고 약속이 고정된 장만 병렬로 묶을 수 있다. **리뷰 PASS 없이 완료로 보고·커밋하지 않는다.**
 
 ## 시각화 — HTML 의 강점을 쓴다 (R6)
 
@@ -134,23 +135,19 @@ cp    <skill>/templates/index.html   docs/index.html       # ▣ 주석 자리�
 cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해서 쓴다
 ```
 
+`authoring/03-진행-장부.md` 도 이때 만든다(서식은 `references/orchestration.md`).
+
 `book.js` 에서 고칠 곳은 `[교재별 1/5]`~`[교재별 5/5]` 다섯 블록뿐이다 —
 `TITLE`/`SUBTITLE`(사이드바 머리), `BOOK`(목차), `TERMS`(툴팁 용어집),
 `STORE_KEY`(진도 키 접두어), `PY_KW`(하이라이터 키워드).
 `TERMS` 의 `_smoke` 항목은 점검이 참조하므로 지우지 않는다.
 
-### 4) 장 집필과 점검 (장마다 반복)
+### 4) 장 집필 — 오케스트레이션
 
-집필 순서와 점검 명령 전문은 `references/authoring.md`. 요약하면:
-
-1. 커리큘럼의 화면 수를 확인하고 **화면 목록(제목 + 한 줄)을 먼저** 적는다.
-2. 앞장이 `.later` 로 남긴 빚을 확인해 갚는다.
-3. `ch-template.html` 을 복사해 본문을 쓴다.
-4. `book.js` 의 `BOOK` 에 `ready: true` 와 실제 화면 수를 반영한다.
-5. **점검** — `_smoke.html`(런타임을 고쳤을 때) + probe(모든 장) + 스크린샷 육안 확인.
-   probe 기대값은 `NO-OVERFLOW screens=<커리큘럼 값> termsMissing=0`.
-   위젯을 넣었으면 **슬라이더를 실제로 움직여 본 스크린샷**까지 본다.
-6. 보고하고 멈춘다(R8).
+**메인은 오케스트레이터만 한다.** 장 본문은 `textbook-html:textbook-writer` 가 쓰고,
+`textbook-html:textbook-reviewer` 가 검수하고, 메인이 장마다 커밋한다.
+루프·진행 장부·병렬화 조건·지시서 내용은 `references/orchestration.md`.
+집필자가 따르는 집필 순서와 점검 명령은 `references/authoring.md`.
 
 ## 동봉 파일
 
@@ -162,7 +159,9 @@ cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해
 | `templates/index.html` | 표지·학습 트랙·목차 |
 | `templates/_smoke.html` | 런타임 점검 46 단정 |
 | `references/plan-and-curriculum.md` | 기획서·커리큘럼 서식과 배분 기준 |
-| `references/authoring.md` | 장 집필 순서, 점검 명령, 자주 틀리는 것 |
+| `references/authoring.md` | 장 집필 순서, 점검 명령, 자주 틀리는 것 (집필·리뷰 에이전트용) |
+| `references/orchestration.md` | 오케스트레이터 루프, 진행 장부, 병렬화 조건 |
+| `../../agents/` | `textbook-writer`, `textbook-reviewer` 서브에이전트 정의 |
 
 ## 비목표
 
