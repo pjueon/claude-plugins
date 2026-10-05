@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko" data-chapter="ch01">
+<head>
+<meta charset="utf-8">
+<title>smoke — 런타임 점검</title>
+<link rel="stylesheet" href="../docs/assets/katex/katex.min.css">
+<link rel="stylesheet" href="../docs/assets/book.css">
+</head>
+<body>
+<main id="book"><div class="inner">
+  <section class="screen" data-title="첫 화면">
+    <h1>첫 화면</h1>
+    <p>점선 용어 <span class="term" data-term="_smoke">용어</span> 확인. 참조는 화면 2, 코드 안 <code>화면 3</code>은 그대로.</p>
+    <div id="m-ok">
+      <p>수식: \(x^{(1)} = (3, 3)\), \(\lVert a\rVert &lt; \sqrt{2}\), \(\text{모든 } i\).</p>
+      <p style="text-align:center">\[\sum_{i=1}^{n} \alpha^{(i)} y^{(i)} = 0\]</p>
+    </div>
+    <p id="m-bad">일부러 틀린 식: \(\frac{1\)</p>
+    <p id="m-code">코드 안은 그대로: <code>\(x\)</code></p>
+<pre><span class="cap"># cap.py</span><code>def place(self, x: int) -&gt; None:
+    # 주석 "가짜문자열" 아님
+    if x &lt; 3000:
+        raise ValueError("안됨")
+    self.total = 1_000
+</code></pre>
+  </section>
+  <section class="screen" data-title="둘째 화면">
+    <h2>둘째</h2>
+    <div class="tabs">
+      <div class="tab" data-label="Before"><p>before 내용</p></div>
+      <div class="tab" data-label="After"><p>after 내용</p></div>
+    </div>
+  </section>
+  <section class="screen" data-title="셋째 화면">
+    <div class="quiz" data-answer="2">
+      <p class="q">질문?</p>
+      <ol class="options">
+        <li data-why="틀린 이유">1번</li>
+        <li data-why="맞는 이유">2번</li>
+      </ol>
+      <div class="explain"><p>해설 본문</p></div>
+    </div>
+  </section>
+</div></main>
+<script src="../docs/assets/katex/katex.min.js"></script>
+<script src="../docs/assets/katex/auto-render.min.js"></script>
+<script src="../docs/assets/math.js"></script>
+<script src="../docs/assets/book.js"></script>
+<script>
+window.addEventListener('load', function () {
+  var out = [];
+  function ok(name, cond, extra) { out.push((cond ? 'PASS ' : 'FAIL ') + name + (extra ? ' :: ' + extra : '')); }
+
+  var screens = document.querySelectorAll('.screen');
+  var toc = document.getElementById('toc');
+  var nav = document.getElementById('nav');
+
+  ok('사이드바 생성', !!toc);
+  ok('목차에 장이 나열됨', toc && toc.querySelectorAll('.ch').length >= 1, toc ? toc.querySelectorAll('.ch').length + '개' : '-');
+  ok('현재 장 표시', !!toc.querySelector('a.ch.here'));
+  ok('화면 목차 3개', toc.querySelectorAll('ol.screens > li').length === 3);
+  ok('집필 전 장은 링크가 아님', toc.querySelectorAll('span.ch').length + toc.querySelectorAll('a.ch').length === toc.querySelectorAll('.ch').length, 'span ' + toc.querySelectorAll('span.ch').length + ' + a ' + toc.querySelectorAll('a.ch').length);
+
+  ok('첫 화면만 활성', screens[0].classList.contains('is-active') && !screens[1].classList.contains('is-active'));
+  ok('화면 카운터', nav.querySelector('.cnt').textContent === '1 / 3', nav.querySelector('.cnt').textContent);
+  ok('진행률 33%', document.querySelector('#progress > i').style.width.indexOf('33.3') === 0, document.querySelector('#progress > i').style.width);
+  ok('첫 화면의 이전 버튼', /^←/.test(nav.querySelector('#prev').textContent), nav.querySelector('#prev').textContent);
+
+  // 코드 하이라이팅
+  var code = document.querySelector('pre > code');
+  ok('키워드 색칠', code.querySelectorAll('.tok-kw').length >= 3, code.querySelectorAll('.tok-kw').length);
+  ok('주석 색칠', code.querySelectorAll('.tok-com').length === 1, code.querySelectorAll('.tok-com').length);
+  ok('문자열 색칠', code.querySelectorAll('.tok-str').length === 1, code.querySelectorAll('.tok-str').length);
+  ok('def 이름 색칠', code.querySelector('.tok-fn') && code.querySelector('.tok-fn').textContent === 'place');
+  ok('self 색칠', code.querySelectorAll('.tok-self').length === 2, code.querySelectorAll('.tok-self').length);
+  ok('숫자 색칠', code.querySelectorAll('.tok-num').length >= 2, code.querySelectorAll('.tok-num').length);
+  ok('부등호 보존', code.textContent.indexOf('x < 3000') > -1);
+  ok('화살표 보존', code.textContent.indexOf('-> None') > -1);
+  ok('주석 안 문자열이 주석으로', code.querySelector('.tok-com').textContent.indexOf('가짜문자열') > -1);
+  ok('cap은 색칠 대상 아님', document.querySelector('pre > .cap').querySelectorAll('span').length === 0);
+
+  // 용어 툴팁
+  var term = document.querySelector('.term');
+  ok('용어 정의 주입', (term.getAttribute('data-def') || '').indexOf('스모크 점검용') > -1);
+  term.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+  var tip = document.getElementById('tip');
+  ok('툴팁 #tip 표시', !!tip && tip.classList.contains('on') && tip.textContent.indexOf('스모크 점검용') > -1);
+  ok('툴팁이 페이지 가로 스크롤을 만들지 않음', document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+     document.documentElement.scrollWidth + ' / ' + document.documentElement.clientWidth);
+  term.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+  ok('툴팁 닫힘', !!tip && !tip.classList.contains('on'));
+
+  // 화면 참조 링크 — 같은 장은 바로 이동하고 돌아가기 버튼이 뜬다
+  var xref = screens[0].querySelector('a.xref[data-screen]');
+  ok('"화면 N" 자동 링크', !!xref && xref.textContent === '화면 2' && xref.getAttribute('href') === '#s2');
+  ok('code 안은 링크로 바꾸지 않음', !screens[0].querySelector('code a.xref'));
+  ok('미리보기 팝업 없음', !document.getElementById('xpop'));
+  if (xref) xref.click();
+  ok('참조를 누르면 그 화면으로 이동', screens[1].classList.contains('is-active') && !screens[0].classList.contains('is-active'));
+  var xback = document.getElementById('xback');
+  ok('돌아가기 버튼 표시', !!xback && xback.classList.contains('on') && xback.textContent.indexOf('화면 1') > -1);
+  if (xback) xback.querySelector('a').click();
+  ok('돌아가기로 원래 화면 복귀', screens[0].classList.contains('is-active') && !xback.classList.contains('on'));
+  ok('주소에 현재 화면 #s1', location.hash === '#s1', location.hash);
+
+  // 다음 화면 이동
+  nav.querySelector('#next').click();
+  ok('2번 화면 활성', screens[1].classList.contains('is-active') && !screens[0].classList.contains('is-active'));
+  ok('카운터 갱신', nav.querySelector('.cnt').textContent === '2 / 3', nav.querySelector('.cnt').textContent);
+  ok('사이드바 현재 화면 표시', toc.querySelectorAll('ol.screens > li')[1].classList.contains('on'));
+  ok('주소 #s2 로 갱신', location.hash === '#s2', location.hash);
+
+  // 탭
+  var tabs = document.querySelector('.tabs');
+  ok('탭바 생성', !!tabs.querySelector('.tabbar'));
+  ok('탭 버튼 2개', tabs.querySelectorAll('.tabbar button').length === 2);
+  ok('첫 탭이 기본 활성', tabs.querySelectorAll('.tab')[0].classList.contains('on'));
+  tabs.querySelectorAll('.tabbar button')[1].click();
+  ok('둘째 탭 전환', tabs.querySelectorAll('.tab')[1].classList.contains('on') && !tabs.querySelectorAll('.tab')[0].classList.contains('on'));
+
+  // 키보드
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+  ok('→ 키로 이동', screens[2].classList.contains('is-active'));
+  ok('마지막 화면에서 다음은 다음 장 또는 비활성', nav.querySelector('#next').disabled || nav.querySelector('#next').textContent !== '다음 →', nav.querySelector('#next').textContent + ' / disabled=' + nav.querySelector('#next').disabled);
+
+  // 퀴즈 (틀린 답 선택)
+  var quiz = document.querySelector('.quiz');
+  var opts = quiz.querySelectorAll('ol.options > li');
+  ok('퀴즈 번호 자동 부여', quiz.querySelector('.qn').textContent === '퀴즈 1', quiz.querySelector('.qn').textContent);
+  ok('선택지 해설 주입', opts[0].querySelector('.why').textContent === '틀린 이유');
+  ok('선택지 키보드 조작 가능', opts[0].getAttribute('tabindex') === '0' && opts[0].getAttribute('role') === 'button');
+  opts[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  ok('틀린 선택 표시', opts[0].classList.contains('pick-bad'));
+  ok('정답도 함께 표시', opts[1].classList.contains('pick-good'));
+  ok('해설 공개', quiz.classList.contains('done'));
+  opts[1].click();
+  ok('채점 후 재선택 무시', !opts[1].classList.contains('picked') || opts[1].classList.contains('pick-good'));
+
+  // 수식 (KaTeX)
+  var mok = document.getElementById('m-ok');
+  ok('인라인 수식 렌더', mok.querySelectorAll('.katex').length >= 4, mok.querySelectorAll('.katex').length + '개');
+  ok('별행 수식 렌더', mok.querySelectorAll('.katex-display').length === 1);
+  ok('정상 수식에 오류 없음', mok.querySelectorAll('.katex-error').length === 0);
+  ok('틀린 식을 오류로 잡음(점검 자체가 동작)', document.querySelectorAll('#m-bad .katex-error').length === 1);
+  ok('code 안의 \\( 는 렌더하지 않음', document.querySelectorAll('#m-code .katex').length === 0 && document.querySelector('#m-code code').textContent === '\\(x\\)');
+
+  var box = document.createElement('pre');
+  box.id = 'test-out';
+  box.textContent = out.join('\n') + '\n\n실패 ' + out.filter(function (l) { return l.indexOf('FAIL') === 0; }).length + '건 / 전체 ' + out.length + '건';
+  document.body.appendChild(box);
+});
+</script>
+</body>
+</html>

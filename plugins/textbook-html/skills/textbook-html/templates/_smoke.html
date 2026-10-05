@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>smoke — 런타임 점검</title>
+<link rel="stylesheet" href="../docs/assets/katex/katex.min.css">
 <link rel="stylesheet" href="../docs/assets/book.css">
 </head>
 <body>
@@ -10,6 +11,13 @@
   <section class="screen" data-title="첫 화면">
     <h1>첫 화면</h1>
     <p>점선 용어 <span class="term" data-term="_smoke">용어</span> 확인. 참조는 화면 2, 코드 안 <code>화면 3</code>은 그대로.</p>
+    <div id="m-ok">
+      <p>수식: \(x^{(1)} = (3, 3)\), \(\lVert a\rVert &lt; \sqrt{2}\), \(\text{모든 } i\).</p>
+      <p style="text-align:center">\[\sum_{i=1}^{n} \alpha^{(i)} y^{(i)} = 0\]</p>
+    </div>
+    <p id="m-bad">일부러 틀린 식: \(\undefinedcmd\)</p>
+    <p id="m-raw">중괄호가 안 닫힌 식: \(\frac{1\)</p>
+    <p id="m-code">코드 안은 그대로: <code>\(x\)</code></p>
 <pre><span class="cap"># cap.py</span><code>def place(self, x: int) -&gt; None:
     # 주석 "가짜문자열" 아님
     if x &lt; 3000:
@@ -35,6 +43,9 @@
     </div>
   </section>
 </div></main>
+<script src="../docs/assets/katex/katex.min.js"></script>
+<script src="../docs/assets/katex/auto-render.min.js"></script>
+<script src="../docs/assets/math.js"></script>
 <script src="../docs/assets/book.js"></script>
 <script>
 window.addEventListener('load', function () {
@@ -125,6 +136,16 @@ window.addEventListener('load', function () {
   ok('해설 공개', quiz.classList.contains('done'));
   opts[1].click();
   ok('채점 후 재선택 무시', !opts[1].classList.contains('picked') || opts[1].classList.contains('pick-good'));
+
+  // 수식 (KaTeX) — 오류는 .katex-error(구문 오류) 또는 빨간 글자(정의되지 않은 명령)로 나타난다
+  var KATEX_ERR = '.katex-error, .katex-html [style*="rgb(204, 0, 0)"]';
+  var mok = document.getElementById('m-ok');
+  ok('인라인 수식 렌더', mok.querySelectorAll('.katex').length >= 4, mok.querySelectorAll('.katex').length + '개');
+  ok('별행 수식 렌더', mok.querySelectorAll('.katex-display').length === 1);
+  ok('정상 수식에 오류 없음', mok.querySelectorAll(KATEX_ERR).length === 0);
+  ok('틀린 식을 오류로 잡음(점검 자체가 동작)', document.querySelectorAll('#m-bad .katex-error, #m-bad .katex-html [style*="rgb(204, 0, 0)"]').length >= 1);
+  ok('중괄호 불일치는 렌더되지 않고 원문으로 남음(rawMath 점검 대상)', document.querySelectorAll('#m-raw .katex').length === 0 && document.getElementById('m-raw').textContent.indexOf('\\(') >= 0);
+  ok('code 안의 \\( 는 렌더하지 않음', document.querySelectorAll('#m-code .katex').length === 0 && document.querySelector('#m-code code').textContent === '\\(x\\)');
 
   var box = document.createElement('pre');
   box.id = 'test-out';
