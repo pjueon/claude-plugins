@@ -32,6 +32,8 @@ docs/                   독자에게 나가는 산출물만 둔다 (GitHub Pages
   glossary.html         (선택) 용어집 부록
   assets/book.css       동봉본. 손대지 않는다
   assets/book.js        동봉본. [교재별] 다섯 블록만 고친다
+  assets/math.js        동봉본. 수식(KaTeX) 렌더 호출. 손대지 않는다
+  assets/katex/         동봉본. KaTeX 로컬 사본(CSS·JS·woff2 글꼴). 손대지 않는다
   .nojekyll             빈 파일. GitHub Pages 가 Jekyll 처리를 건너뛰게 한다
 
 authoring/              집필에 필요한 저자용 문서. 독자에게 나가지 않는다
@@ -39,7 +41,7 @@ authoring/              집필에 필요한 저자용 문서. 독자에게 나�
   01-커리큘럼.md        장별 항목 · 화면 수 · 시간 (집필 전)
   02-코드-정본.md       (코드가 장을 넘어 누적되는 교재만) 시그니처 고정
   03-진행-장부.md       장 사이 약속·용어 정의 기록 (집필 에이전트 간 인계)
-  _smoke.html           런타임 점검 47 단정 (../docs/assets 를 참조)
+  _smoke.html           런타임 점검 53 단정 (../docs/assets 를 참조)
 ```
 
 `docs/` 에는 독자가 읽을 파일만 둔다. 기획서·커리큘럼·점검 페이지가 섞여 있으면
@@ -54,7 +56,7 @@ authoring/              집필에 필요한 저자용 문서. 독자에게 나�
   새 CSS 클래스나 외부 라이브러리를 만들지 않는다.
 - **R2** **`file://` 로 더블클릭해서 열린다**(웹서버 없음). `fetch()` 로 로컬 파일을 읽지
   않고, `<script type="module">` 을 쓰지 않고, **CDN·외부 폰트를 쓰지 않는다.** 본문은 각 장
-  HTML 에 인라인으로 넣는다. 진도는 `localStorage` + try/catch, 키에 교재별 접두어를 붙인다.
+  HTML 에 인라인으로 넣는다. 수식 라이브러리는 동봉된 로컬 KaTeX 만 쓴다(아래 "수식" 절). 진도는 `localStorage` + try/catch, 키에 교재별 접두어를 붙인다.
 
 ### 서술 원칙 — 교재를 교재답게 만드는 것
 
@@ -149,15 +151,29 @@ cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해
 루프·진행 장부·병렬화 조건·지시서 내용은 `references/orchestration.md`.
 집필자가 따르는 집필 순서와 점검 명령은 `references/authoring.md`.
 
+## 수식
+
+수식은 유니코드(`x⁽¹⁾`, `‖a‖`)를 `<code>` 에 넣지 말고 **LaTeX 로 쓴다.** 고정폭 글꼴로 나와
+첨자가 어긋나고 분수·제곱근·Σ 한계 표기가 안 되기 때문이다.
+
+- 문장 속은 `\( … \)`, 별행은 `<p style="text-align:center">\[ … \]</p>`.
+- 코드 식별자·함수명(`SVC`, `np.dot`)은 수식이 아니라 `<code>` 로 둔다. `<pre>` 안은 렌더하지 않는다.
+- HTML 안이므로 부등호는 `&lt;` 로 쓴다(`>` 는 그대로 가능).
+- 노름은 `\lVert a\rVert`, 한글은 `\text{모든}` 으로 감싼다.
+- 렌더는 `math.js` 가 `<main id="book">` 안에서 한 번 한다. 스크립트는 반드시 `book.js` 앞에 둔다.
+- 수식이 없는 교재는 `ch-template.html` 의 katex·math 줄을 빼도 된다.
+- 위젯이 JS 로 만들어 내는 수식은 렌더되지 않는다(위젯 값은 숫자 위주로 쓰거나 `<code>`).
+
 ## 동봉 파일
 
 | 파일 | 무엇 |
 |---|---|
 | `templates/assets/book.css` | 공통 스타일(라이트/다크). 색만 `:root` 변수로 조정 |
+| `templates/assets/katex/`, `math.js` | 수식 렌더링(KaTeX 로컬 사본 + 호출 스크립트). 오프라인 `file://` 로 동작 |
 | `templates/assets/book.js` | 런타임 — 목차·화면 넘김·진행률·퀴즈 채점·탭·툴팁·화면 참조 링크(이동·돌아가기)·하이라이터·진도 |
 | `templates/ch-template.html` | **화면 서식의 진실 원천.** 쓸 수 있는 부품 전부 + 위젯 예시 |
 | `templates/index.html` | 표지·학습 트랙·목차 |
-| `templates/_smoke.html` | 런타임 점검 47 단정 |
+| `templates/_smoke.html` | 런타임 점검 53 단정 |
 | `references/plan-and-curriculum.md` | 기획서·커리큘럼 서식과 배분 기준 |
 | `references/authoring.md` | 장 집필 순서, 점검 명령, 자주 틀리는 것 (집필·리뷰 에이전트용) |
 | `references/orchestration.md` | 오케스트레이터 루프, 진행 장부, 병렬화 조건 |

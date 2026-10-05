@@ -9,6 +9,7 @@
 4. **화면 목록을 먼저 적고**(제목 + 한 줄), 그 다음에 본문을 쓴다.
    화면 개수가 커리큘럼과 다르면 그 이유를 커리큘럼에 반영한다.
 5. `ch-template.html` 을 복사해 쓴다. 없는 마크업은 만들지 않는다.
+   수식은 LaTeX `\( \)`·`\[ \]` 로 쓴다(SKILL.md "수식" 절). 코드 식별자는 `<code>`.
 6. **`book.js` 의 `BOOK` 에 이 장의 `ready: true` 와 실제 화면 수를 반영한다.**
 7. 점검(아래)을 돌린다.
 
@@ -19,7 +20,7 @@
 
 ### 1) 런타임 점검 — `_smoke.html`
 
-47개 단정(사이드바, 화면 이동, 카운터·진행률·주소 `#sN`, 하이라이터 토큰, 부등호 보존, 탭,
+53개 단정(사이드바, 화면 이동, 카운터·진행률·주소 `#sN`, 하이라이터 토큰, 부등호 보존, 탭, 수식 렌더(KaTeX),
 퀴즈 채점·키보드 조작, 용어 툴팁 `#tip`, 화면 참조 링크·돌아가기).
 **`book.css` · `book.js` 를 고칠 때마다 돌린다.**
 
@@ -53,13 +54,22 @@ window.addEventListener('load', function () {
   var box = document.createElement('pre'); box.id = 'probe-out';
   box.textContent = (res.length ? 'OVERFLOW ' + res.join(',') : 'NO-OVERFLOW')
     + ' screens=' + scs.length
-    + ' termsMissing=' + document.querySelectorAll('.term:not([data-def])').length;
+    + ' termsMissing=' + document.querySelectorAll('.term:not([data-def])').length
+    + ' katexError=' + document.querySelectorAll('.katex-error, .katex-html [style*="rgb(204, 0, 0)"]').length
+    + ' rawMath=' + (function () {
+      var c = document.getElementById('book').cloneNode(true);   // 렌더되지 않고 남은 \( \[ 가 있는지
+      Array.prototype.forEach.call(c.querySelectorAll('pre, code, .katex, svg, script'), function (e) { e.remove(); });
+      return /\\\(|\\\[/.test(c.textContent) ? 1 : 0;
+    })();
   document.body.appendChild(box);
 });
 ```
 
 `--window-size=1280,1250 --dump-dom` 으로 열고 `<pre id="probe-out">` 를 읽는다.
-기대값은 `NO-OVERFLOW screens=<커리큘럼의 화면 수> termsMissing=0`.
+기대값은 `NO-OVERFLOW screens=<커리큘럼의 화면 수> termsMissing=0 katexError=0 rawMath=0`.
+`katexError` 는 LaTeX 오류(문법 오류, 또는 정의되지 않은 명령이라 빨간 글자로 나온 것), `rawMath` 는 렌더되지 않고 `\(` 가 그대로 남은 곳이다(스크립트 순서 오류, 또는 중괄호 `{ }` 짝이 안 맞는 식 — 이 경우는 오류 표시 없이 원문이 그대로 보인다).
+오류가 나오면 `.katex-error` 의 `title` 속성에 KaTeX 오류 메시지가 있고, 빨간 글자는 그 글자가 곧 틀린 명령이다.
+수식 내용(숫자·부호)이 맞는지는 이 점검이 못 본다 — 검수에서 직접 계산한다.
 가로 넘침이 나오면 **코드 줄을 줄인다**(본문 폭 45rem, 코드 폰트 .82rem → 약 90자).
 레이아웃을 넓히는 방향으로 대응하지 않는다.
 

@@ -8,6 +8,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>1장 · 장 제목 — 교재 제목</title><!-- ▣ -->
+<link rel="stylesheet" href="assets/katex/katex.min.css"><!-- 수식을 쓰지 않는 교재는 이 줄과 아래 katex·math 스크립트 3줄을 뺀다 -->
 <link rel="stylesheet" href="assets/book.css">
 </head>
 <body>
@@ -73,6 +74,12 @@
     </svg>
     <figcaption>그림이 무엇을 뜻하는지 한 문장.</figcaption>
   </figure>
+
+  <!-- 수식: LaTeX 를 \( … \)(문장 속) 와 \[ … \](별행) 로 감싼다. KaTeX 가 오프라인으로 그린다.
+       코드 식별자(np.dot, SVC 등)는 수식이 아니라 <code> 로 쓴다. 부등호는 &lt; 로 쓴다.
+       별행 수식은 <p style="text-align:center"> 안에 둔다. -->
+  <p>점 \(x = (x_1, x_2)\) 와 가중치 \(w\) 의 내적은 \(w\cdot x = w_1x_1 + w_2x_2\) 입니다.</p>
+  <p style="text-align:center">\[\lVert a\rVert = \sqrt{a_1^{2} + a_2^{2}}\]</p>
 
   <div class="table-wrap"><!-- 표는 항상 table-wrap 으로 감싼다(좁은 화면 가로 스크롤) -->
     <table>
@@ -259,6 +266,9 @@ class Thing:
 
 </div></main>
 
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/math.js"></script><!-- 반드시 book.js 앞. 화면을 나누기 전에 수식을 그린다 -->
 <script src="assets/book.js"></script>
 </body>
 </html>
