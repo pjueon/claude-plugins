@@ -15,7 +15,7 @@ description: >-
 
 목표는 하나다 — **혼자 읽어도 이해되는, 친절한 학습 자료.** 주제 하나를 **여러 장짜리
 교재 한 권**으로 만든다. 커리큘럼을 먼저 잡고, 장을 하나씩 집필하고, 장마다 헤드리스
-브라우저로 점검한다. 산출물은 `docs/` 에 커밋되어 장이 추가되며 자라는 자산이다.
+브라우저로 점검한다. 산출물(`docs/`)과 집필용 문서(`authoring/`)는 폴더를 나눠 커밋하며, 장이 추가되며 자라는 자산이다.
 
 주제는 코드에 한정되지 않는다 — **수학·알고리즘·공학·업무 지식**도 대상이다.
 문서와 교재 본문은 한국어 존댓말로 쓴다(코드·수식·식별자 인용은 원문 그대로).
@@ -26,16 +26,23 @@ description: >-
 ## 산출물 구조
 
 ```
-docs/
-  00-기획.md          독자·학습목표·관통 예제·형식 결정 (집필 전)
-  01-커리큘럼.md      장별 항목 · 화면 수 · 시간 (집필 전)
-  02-코드-정본.md     (코드가 장을 넘어 누적되는 교재만) 시그니처 고정
-  index.html          표지 + 목차 + 학습 트랙
+docs/                   독자에게 나가는 산출물만 둔다 (GitHub Pages 배포 폴더로 그대로 쓸 수 있다)
+  index.html            표지 + 목차 + 학습 트랙
   ch00.html … chNN.html
-  _smoke.html         런타임 점검 46 단정
-  assets/book.css     동봉본. 손대지 않는다
-  assets/book.js      동봉본. [교재별] 다섯 블록만 고친다
+  glossary.html         (선택) 용어집 부록
+  assets/book.css       동봉본. 손대지 않는다
+  assets/book.js        동봉본. [교재별] 다섯 블록만 고친다
+  .nojekyll             빈 파일. GitHub Pages 가 Jekyll 처리를 건너뛰게 한다
+
+authoring/              집필에 필요한 저자용 문서. 독자에게 나가지 않는다
+  00-기획.md            독자·학습목표·관통 예제·형식 결정 (집필 전)
+  01-커리큘럼.md        장별 항목 · 화면 수 · 시간 (집필 전)
+  02-코드-정본.md       (코드가 장을 넘어 누적되는 교재만) 시그니처 고정
+  _smoke.html           런타임 점검 46 단정 (../docs/assets 를 참조)
 ```
+
+`docs/` 에는 독자가 읽을 파일만 둔다. 기획서·커리큘럼·점검 페이지가 섞여 있으면
+배포할 때 저자 전용 문서가 함께 노출된다.
 
 ## 규약 R1~R8
 
@@ -99,7 +106,7 @@ docs/
 
 ## 절차
 
-### 1) 기획 확정 — `docs/00-기획.md`
+### 1) 기획 확정 — `authoring/00-기획.md`
 
 주제만 던졌으면 **네 가지를 먼저 묻는다**(나머지는 알아서 정하고 결정으로 적는다).
 
@@ -110,7 +117,7 @@ docs/
 
 서식과 완료 기준은 `references/plan-and-curriculum.md` §1.
 
-### 2) 커리큘럼 — `docs/01-커리큘럼.md`
+### 2) 커리큘럼 — `authoring/01-커리큘럼.md`
 
 장별 **항목 · 화면 수 · 시간**을 정한다. 이 세 값이 집필의 계약이다.
 배분 기준은 같은 참조 문서 §2. 확정되면 `book.js` 의 `BOOK` 배열에 옮겨 적고,
@@ -119,8 +126,10 @@ docs/
 ### 3) 골격 세우기 (첫 장 전에 한 번)
 
 ```bash
+mkdir -p docs authoring
 cp -r <skill>/templates/assets       docs/assets
-cp    <skill>/templates/_smoke.html  docs/_smoke.html
+touch docs/.nojekyll
+cp    <skill>/templates/_smoke.html  authoring/_smoke.html
 cp    <skill>/templates/index.html   docs/index.html       # ▣ 주석 자리를 채운다
 cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해서 쓴다
 ```

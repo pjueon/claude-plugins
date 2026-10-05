@@ -5,7 +5,7 @@
 1. **커리큘럼에서 그 장의 항목 · 화면 수 · 시간을 확인한다.** 화면 수는 지키는 것이 좋다.
 2. **앞장이 남긴 빚을 확인한다.** 앞장에 `.later` 로 "N장에서 본다"고 적어둔 것,
    커리큘럼의 "앞장에서 받는 것". 갚지 않은 빚이 있으면 이 장에서 갚는다.
-3. **코드가 누적되는 교재면 `02-코드-정본.md` 를 먼저 연다.** 본문 코드는 정본을 따른다.
+3. **코드가 누적되는 교재면 `authoring/02-코드-정본.md` 를 먼저 연다.** 본문 코드는 정본을 따른다.
 4. **화면 목록을 먼저 적고**(제목 + 한 줄), 그 다음에 본문을 쓴다.
    화면 개수가 커리큘럼과 다르면 그 이유를 커리큘럼에 반영한다.
 5. `ch-template.html` 을 복사해 쓴다. 없는 마크업은 만들지 않는다.
@@ -25,7 +25,7 @@
 
 ```bash
 chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=4000 \
-  --dump-dom "file:///<docs 절대경로>/_smoke.html" > out.html
+  --dump-dom "file:///<authoring 절대경로>/_smoke.html" > out.html
 # out.html 의 <pre id="test-out"> 에서 FAIL 이 0 인지 확인
 ```
 
