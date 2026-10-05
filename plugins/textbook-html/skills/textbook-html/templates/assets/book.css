@@ -519,3 +519,7 @@ figure.fig figcaption { font-size: .82rem; color: var(--muted); margin-top: .5re
   pre { white-space: pre-wrap; }
   body { font-size: 11pt; }
 }
+
+/* 수식 (KaTeX) */
+.katex { font-size: 1.08em; }
+.katex-display { margin: .9rem 0; overflow-x: auto; overflow-y: hidden; }
