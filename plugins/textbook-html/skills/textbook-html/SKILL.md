@@ -180,8 +180,8 @@ cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해
 | `templates/index.html` | 표지·학습 트랙·목차 |
 | `templates/_smoke.html` | 런타임 점검 53 단정 |
 | `references/plan-and-curriculum.md` | 기획서·커리큘럼 서식과 배분 기준 |
-| `references/authoring.md` | 장 집필 순서, 점검 명령, 자주 틀리는 것 (집필·리뷰 에이전트용) |
-| `references/orchestration.md` | 오케스트레이터 루프, 진행 장부, 병렬화 조건 |
+| `references/authoring.md` | 장 집필 순서, 점검 명령, 한국어 문체, 자주 틀리는 것 (집필·리뷰 에이전트용) |
+| `references/orchestration.md` | 오케스트레이터 루프, 진행 장부, 병렬화 조건, 기존 장 문체 교정 패스 |
 | `../../agents/` | `textbook-writer`, `textbook-reviewer` 서브에이전트 정의 |
 
 ## 비목표
