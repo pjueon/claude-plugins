@@ -339,7 +339,7 @@ th { background: var(--bg-soft); font-weight: 700; color: var(--fg-strong); }
 }
 #tip.on { display: block; }
 
-/* 화면 참조 링크 */
+/* 페이지 참조 링크 */
 a.xref { text-decoration: underline dotted; text-underline-offset: .2em; cursor: pointer; }
 a.xref:hover { text-decoration-style: solid; }
 
