@@ -103,12 +103,11 @@ git author 는 모두 사용자다. Co-Authored-By 를 넣지 않는다. 한국�
 개념 설명과 해설은 기본적으로 Skill 도구로 `teach:textbook-html` 을 불러 **장 단위로** 쓴다(상담에서
 '교재 생략'을 골랐으면 부르지 않는다). args 는 아래 두 형식만 쓴다.
 
-- `teach 연동: <N>장 집필, 답안 후공개`
+- `teach 연동: <N>장 집필`
 - `teach 연동: <N>장 답안공개, 학습자 구현 <sha>..<sha>`
 
 기획·커리큘럼은 상담에서 이미 만들었으므로 textbook-html 은 다시 묻지 않고 **지시된 장만** 처리하고
-멈춘다. 골격 복사(assets·`_smoke.html`·`index.html`)는 이 스킬의 기본 디렉터리(Base directory) 기준
-`../textbook-html/templates/` 에서 가져온다.
+멈춘다. 골격 세우기(assets·`_smoke.html`·`index.html` 복사, `book.js` 교재별 블록)는 상담이 한다(`references/consultation.md` §4). 원본은 이 스킬의 기본 디렉터리(Base directory) 기준 `../textbook-html/templates/` 다.
 
 후공개 장의 과제 모범답안 자리(`details.fold answer` 의 `fold-body`)에는 아래만 들어간다. summary 는 그대로 둔다.
 

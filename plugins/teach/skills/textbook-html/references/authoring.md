@@ -158,7 +158,13 @@ chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=9000 \
    탭 문자로 바뀌어 수식이 조용히 깨진다. 치환 문자열은 raw 로 쓰고, 끝나면
    `grep -nP "[\x00-\x08\x0b\x0c\x0e-\x1f]" docs/chNN.html` 이 0건인지 확인한다. 코드 블록(`pre`)은 의도한 변경 외에 diff 가 없어야 한다.
 9. **후공개 장에서 답을 흘리는 것** — 예시 코드·퀴즈 해설 등 본문 어딘가에 과제의 답이 드러나면 후공개의 의미가 없다.
-   자리표시자(`details.fold answer` 의 `fold-body`)에는 `<!-- teach:answer-pending -->` 마커와 정해진 문구만 둔다.
+   자리표시자(`details.fold answer` 의 `fold-body`)에는 아래 두 줄만 그대로 둔다(summary 는 그대로). 문구를 장마다 바꾸지 않는다.
+
+   ```html
+   <!-- teach:answer-pending -->
+   <p>직접 작성해 본 뒤 공개됩니다. 실습을 커밋하고 피드백을 받으면 이 자리에 모범답안이 들어옵니다.</p>
+   ```
+
    점검은 `grep -c "teach:answer-pending" docs/chNN.html`.
 
 ## 진도 저장 주의

@@ -83,7 +83,7 @@ solutions/chNN/         (같은 경우) 그 장 완료 시점의 모범 상태 �
   독자에게는 리뷰해 줄 사람이 없다. 동봉 방식은 두 가지다.
   - **즉시 동봉**(기본, 독립 교재): 집필할 때 모범답안을 함께 넣는다.
   - **후공개**(학습자가 `code/` 에서 과제를 수행하는 교재): `fold-body` 에는 자리표시자
-    (`<!-- teach:answer-pending -->` 와 정해진 문구)만 넣고 바로 커밋한다. 실제 답안은
+    (`<!-- teach:answer-pending -->` 와 `references/authoring.md` "자주 틀리는 것" 9번의 정해진 문구)만 넣고 바로 커밋한다. 실제 답안은
     별도 "답안공개" 루프가 넣는다(`references/orchestration.md`).
 
   공개 시점까지 답이 반드시 들어간다 — 답 없는 과제는 내지 않는다.
@@ -178,7 +178,7 @@ cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해
 
 - 직접: `/teach:textbook-html <주제…>` — 위 절차 1)부터 진행한다.
 - `teach:hands-on` 세션: Skill 도구로 부른다. args 는 아래 두 형식이다.
-  - `teach 연동: <N>장 집필, 답안 후공개`
+  - `teach 연동: <N>장 집필` (후공개 여부는 args 가 아니라 장부의 "답안" 칸을 따른다)
   - `teach 연동: <N>장 답안공개, 학습자 구현 <sha>..<sha>`
 
 hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/orchestration.md` 의
