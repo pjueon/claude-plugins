@@ -1,0 +1,40 @@
+/* 퀴즈 */
+.quiz {
+  margin: 1.5rem 0; padding: 1.1rem 1.25rem; border-radius: 12px;
+  border: 1px solid var(--rule); background: var(--card);
+}
+.quiz .qn { font-size: .74rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
+.quiz .q { font-weight: 700; color: var(--fg-strong); margin: 0 0 .8rem; }
+.quiz ol.options { list-style: none; margin: 0; padding: 0; counter-reset: opt; }
+.quiz ol.options li {
+  counter-increment: opt; margin: .4rem 0; padding: .55rem .8rem .55rem 2.4rem;
+  border: 1px solid var(--rule); border-radius: 9px; cursor: pointer;
+  position: relative; font-size: .95rem; background: var(--bg);
+  transition: background .12s, border-color .12s;
+}
+.quiz ol.options li::before {
+  content: counter(opt); position: absolute; left: .7rem; top: .55rem;
+  width: 1.3rem; height: 1.3rem; border-radius: 50%; background: var(--bg-soft);
+  border: 1px solid var(--rule); font-size: .76rem; font-weight: 700;
+  display: grid; place-items: center; color: var(--muted);
+}
+.quiz ol.options li:hover { border-color: var(--accent); }
+.quiz.done ol.options li { cursor: default; }
+.quiz.done ol.options li:hover { border-color: var(--rule); }
+.quiz ol.options li.pick-good { border-color: var(--good); background: var(--good-bg); }
+.quiz ol.options li.pick-good::before { content: "✓"; background: var(--good); color: #fff; border-color: var(--good); }
+.quiz ol.options li.pick-bad { border-color: var(--bad); background: var(--bad-bg); }
+.quiz ol.options li.pick-bad::before { content: "✕"; background: var(--bad); color: #fff; border-color: var(--bad); }
+.quiz .why {
+  display: none; margin-top: .45rem; padding-left: .2rem;
+  font-size: .88rem; color: var(--muted);
+}
+.quiz ol.options li.picked .why { display: block; }
+.quiz .explain {
+  display: none; margin-top: 1rem; padding-top: .9rem;
+  border-top: 1px solid var(--rule-soft); font-size: .93rem;
+}
+.quiz.done .explain { display: block; }
+.quiz .explain > :last-child { margin-bottom: 0; }
+.quiz .explain b.lbl { color: var(--accent); }

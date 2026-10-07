@@ -160,7 +160,7 @@ cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해
 - `teach:hands-on` 세션: Skill 도구로 부른다. args 는 아래 두 형식이다.
   - `teach 연동: <N>장 집필` (후공개 여부는 args 가 아니라 장부의 "답안" 칸을 따른다)
   - `teach 연동: <N>장 답안공개, 학습자 구현 <sha>..<sha>`
-- `teach:explain-html` 이 사용자 확인 후 넘길 때: 넘겨받은 주제·근거 요약으로 절차 1)부터 진행한다(교재 폴더는 explain-html 이 사용자에게 확인한 곳).
+- `teach:explain-html` 이 사용자 확인 후 넘길 때(args `explain 연동: <주제>, 폴더 <경로>`): 넘겨받은 주제·근거 요약으로 절차 1)부터 진행한다(교재 폴더는 explain-html 이 사용자에게 확인한 곳).
 
 hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/orchestration.md` 의
 "다음 장으로 이어 간다" 기본값보다 이 규칙이 우선한다. 이 스킬에는
@@ -209,7 +209,7 @@ hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/
 | `references/orchestration.md` | 오케스트레이터 루프, 진행 장부, 병렬화 조건, 기존 장 문체 교정 패스 |
 | `../../agents/` | `textbook-writer`, `textbook-reviewer` 서브에이전트 정의 |
 
-퀴즈 마크업은 explain-html 과 동일 계약이다(`../../shared/quiz.md`). 한쪽을 바꾸면 다른 쪽도 맞추고 그 문서의 비교 명령을 돌린다. 문체(`../../shared/writing-style.md`)와 시각화(`../../shared/visuals.md`)도 공통 기준이다.
+퀴즈 마크업은 explain-html 과 동일 계약이다(`../../shared/quiz.md`). `book.js`·`book.css` 의 퀴즈 부분은 `../../shared/quiz.js`·`quiz.css` 정본의 사본이다. 정본이나 사본을 바꾸면 그 문서의 비교 명령을 돌린다. 문체(`../../shared/writing-style.md`)와 시각화(`../../shared/visuals.md`)도 공통 기준이다.
 
 ## 비목표
 
