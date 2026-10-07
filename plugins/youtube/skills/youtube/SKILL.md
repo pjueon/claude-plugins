@@ -42,7 +42,7 @@ description: >-
 
 1. 전용 프로파일 생성 (PowerShell):
    ```powershell
-   & "C:\Program Files\Mozilla Firefox\firefox.exe" -CreateProfile "ytdlp %USERPROFILE%\firefox-ytdlp"
+   & "C:\Program Files\Mozilla Firefox\firefox.exe" -CreateProfile "ytdlp $env:USERPROFILE\firefox-ytdlp"
    ```
 2. 그 프로파일로 Firefox를 띄워 **유튜브에 로그인**(멤버십 계정):
    ```powershell
@@ -50,7 +50,7 @@ description: >-
    ```
 3. 경로를 환경변수로 영구 등록:
    ```powershell
-   [Environment]::SetEnvironmentVariable("YT_FIREFOX_PROFILE", "%USERPROFILE%\firefox-ytdlp", "User")
+   [Environment]::SetEnvironmentVariable("YT_FIREFOX_PROFILE", "$env:USERPROFILE\firefox-ytdlp", "User")
    ```
    → 등록 후에는 **터미널/IDE를 재시작**해야 새 값이 잡힌다. 단, 지금 세션에서는
    사용자가 알려준 경로를 변수에 바로 넣어 이어서 작업하면 된다.
@@ -246,4 +246,4 @@ yt-dlp $COMMON --audio-multistreams --merge-output-format mkv \
 ## 주의
 
 - 다운로드는 본인이 저작권상 받을 권리가 있는 콘텐츠(본인 멤버십 포함) 전제로만 한다.
-- 댓글 수집·로컬 LLM 분업은 범위 밖이다. 필요하면 사용자에게 알리고 별도로 확장한다.
+- 댓글 수집은 범위 밖이다. 필요하면 사용자에게 알리고 별도로 확장한다.
