@@ -29,7 +29,7 @@
     {
       "name": "teach",
       "source": "./plugins/teach",
-      "description": "Claude가 튜터가 되는 학습 도구 모음(hands-on 과외·textbook-html HTML 교재 집필). 학습 repo를 실습 코드가 딸린 책 한 권으로 키운다"
+      "description": "Claude가 튜터가 되는 학습 도구 모음(hands-on 과외·textbook-html HTML 교재 집필·explain-html 단일 HTML 설명문). 학습 repo를 실습 코드가 딸린 책 한 권으로 키운다"
     }
   ]
 }

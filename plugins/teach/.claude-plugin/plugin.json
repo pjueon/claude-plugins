@@ -1,7 +1,7 @@
 {
   "name": "teach",
-  "description": "Claude가 튜터가 되어 가르치는 도구 모음. hands-on: 학습 repo에서 상담·실습 출제·리뷰·모범답안 후공개로 진행하는 과외. textbook-html: 커리큘럼 기반 HTML 교재 집필(목차·진도·퀴즈 채점 런타임과 KaTeX 동봉). 교재 런타임은 다른 teach 스킬도 재사용할 수 있다",
-  "version": "0.1.0",
+  "description": "Claude가 튜터가 되어 가르치는 도구 모음. hands-on: 학습 repo에서 상담·실습 출제·리뷰·모범답안 후공개로 진행하는 과외. textbook-html: 커리큘럼 기반 HTML 교재 집필(목차·진도·퀴즈 채점 런타임과 KaTeX 동봉). explain-html: 커밋·PR·이슈·개념을 배경·직관·상세·퀴즈로 풀어 쓴 단일 HTML 설명문. 교재 런타임은 다른 teach 스킬도 재사용할 수 있다",
+  "version": "0.2.0",
   "author": {
     "name": "jueon.park",
     "email": "bluegbgb@gmail.com"
