@@ -1,63 +1,38 @@
 # AI Agent를 위한 규칙
+
+## 소통·산출물
 - 사용자와 항상 한국어 존댓말로 소통한다.
-- 커밋 메시지에 Co-Authored-by 라인을 추가하지 않는다.
-- 사용자가 요청하지 않는 한, 모든 산출물에 대해 Generated with Claude Code 같은 류의 문구 삽입을 금지한다. 
-- 커밋 메시지는 한국어로 작성하고, 가독성을 고려하여 작성한다. 의미 단위의 작은 커밋을 지향한다. 
-- 코드 작업 시 아래 적힌 코딩 가이드라인을 준수한다. 
+- 커밋 메시지는 한국어로, 가독성 있게 작성하며 의미 단위의 작은 커밋을 지향한다.
+- 사용자가 요청하지 않는 한 커밋·PR·산출물 어디에도 Co-Authored-By 라인이나 "Generated with Claude Code" 류 문구를 넣지 않는다.
 
----
+## 작업 진행 방식
+- 사람의 개입은 최소화한다. 착수 전에 사용자만 내릴 수 있는 결정(모호한 요구사항, 되돌리기 어려운 작업, 취향·정책 선택)이 있으면 한 번에 모아 먼저 묻고, 없으면 질문 없이 끝까지 중단 없이 진행한다.
+- 진행 중 새로 생긴 사소한 결정은 합리적 기본값으로 진행하고 최종 보고에 명시한다. 되돌리기 어려운 결정만 멈춰서 묻는다.
 
-## Coding Guidelines
+## 코딩 가이드라인
+1. **코딩 전에 생각하기**: 가정을 명시하고, 더 단순한 방법이 있으면 말하며 필요하면 반론한다. 선택지는 나열하지 말고 권고안과 근거를 제시한다.
+2. **단순함 우선**: 요청된 것만 최소한의 코드로 해결한다. 추측성 기능, 단일 용도 추상화, 불가능한 시나리오의 에러 처리를 넣지 않는다. 200줄이 50줄로 가능하면 다시 쓴다.
+3. **최소 변경**: 요청과 직접 관련된 줄만 고친다. 인접 코드·주석·포맷을 "개선"하지 않는다. 내 변경으로 생긴 미사용 import·변수·함수만 정리하고, 무관한 데드코드는 삭제하지 말고 언급만 한다.
+4. **목표 중심 실행**: 검증 가능한 성공 기준을 먼저 정하고 통과할 때까지 반복한다. 다단계 작업은 `[단계] → verify: [확인 방법]` 형태로 짧게 계획한다.
 
-### 1. Think Before Coding
+## 서브에이전트 활용
+이 섹션은 서브에이전트 사용에 대한 사용자의 상시 요청이다. 아래 조건에 해당하면 매번 허락을 구하지 않고 서브에이전트를 사용한다.
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+### 사용 원칙
+- 효율 이득이 분명한 작업은 적극 위임한다. 예: 넓은 범위 탐색, 독립적인 병렬 작업, 대량의 기계적 작업, 큰 출력이 메인 컨텍스트를 오염시킬 작업.
+- 한두 번의 도구 호출로 끝나는 작은 작업은 직접 한다. 위임 비용이 이득보다 크다.
+- **설치된 스킬·에이전트·플러그인이 서브에이전트 사용이나 model 선택 절차를 정해 두었다면 그것이 이 섹션보다 우선한다.** (model이 frontmatter에 고정된 에이전트, 플러그인이 주입하는 위임 정책 등)
 
-Before implementing:
-- State your assumptions explicitly.
-- If a simpler approach exists, say so. Push back when warranted.
+### model 지정
+- General Purpose, Explore 등 model이 고정되지 않은 에이전트를 호출할 때는 항상 `model`을 명시한다. (`fork`는 model 지정이 무시되므로 제외)
+- 기본값은 `sonnet`, 난이도가 높으면 `opus`, 기계적인 작업(단순 검색·변환·일괄 치환 등)은 `haiku`.
 
-### 2. Simplicity First
+### 계획
+- 규모가 큰 작업은 착수 전에 서브에이전트(`Plan`)로 먼저 계획을 세운 뒤 진행한다. 기본 model은 `opus`. 수정 파일이 3개 이상이거나, 서로 의존하는 단계가 여러 개이거나, 설계가 정해지지 않았다면 규모가 큰 작업으로 본다. 10분 안에 끝날 간단한 작업은 생략한다.
 
-**Minimum code that solves the problem. Nothing speculative.**
+### 검수
+- 계획과 같은 조건이거나 동작 변경을 동반하는 작업은 작업자와 별도의 에이전트가 검수한다. 작업자가 자기 결과를 자기가 검수하지 않는 것이 요지다.
+- 기본 model은 `opus`이며 난이도에 따라 조정한다. 작업에 맞는 빌트인 스킬(`code-review` 등)이나 전용 reviewer 에이전트가 있으면 그것을 쓴다.
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-### 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-### 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+### advisor
+- advisor가 가용하면 적극 활용한다. 단, 현재 모델이 opus 이상이면 호출하지 않는다. 실행자와 advisor가 같은 모델이라 이득이 적다.
