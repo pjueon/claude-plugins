@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<!-- ▣ explain-html 골격. 복사해 ▣ 자리를 채운다. 안내 주석(HTML 주석 중 ▣ 로 시작하는 것)은 채우면서 지운다. 남은 ▣ 0 이 완료 기준.
+     규약: file:// 로 열림 · CDN·외부 폰트·네트워크 호출·ES 모듈·외부 스크립트/스타일 참조 금지 · CSS·JS 인라인 -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>▣ 제목</title>
+<style>
+:root {
+  --bg: #fbfaf7;
+  --bg-soft: #f4f1ea;
+  --card: #ffffff;
+  --fg: #24211d;
+  --fg-strong: #100e0c;
+  --muted: #6b6559;
+  --rule: #e2ddd2;
+  --rule-soft: #eee9df;
+  --accent: #2f5d8a;
+  --accent-bg: #eaf1f8;
+  --warn: #a8571b;
+  --warn-bg: #fbf1e6;
+  --good: #2b6f4c;
+  --good-bg: #ebf4ee;
+  --bad: #a33a33;
+  --bad-bg: #fbeeed;
+  --code-bg: #f5f2ec;
+  --code-fg: #2b2721;
+  --hl-bg: rgba(168,87,27,.16);
+  --measure: 45rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16171a;
+    --bg-soft: #1b1d21;
+    --card: #1e2024;
+    --fg: #e3e0da;
+    --fg-strong: #f5f3ef;
+    --muted: #9b968d;
+    --rule: #2e3237;
+    --rule-soft: #262a2e;
+    --accent: #7fb3e0;
+    --accent-bg: #1b2a38;
+    --warn: #dda15e;
+    --warn-bg: #322a1e;
+    --good: #7ac496;
+    --good-bg: #1d2c24;
+    --bad: #e08b84;
+    --bad-bg: #33211f;
+    --code-bg: #191b1e;
+    --code-fg: #d8d5cf;
+    --hl-bg: rgba(221,161,94,.20);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Segoe UI", -apple-system, "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.85;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+.kicker {
+  font-size: .74rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--accent); margin: 0 0 .5rem;
+}
+
+h1 {
+  font-size: 1.95rem; line-height: 1.3; letter-spacing: -.02em;
+  margin: .2rem 0 1.2rem; color: var(--fg-strong); font-weight: 800;
+}
+h2 {
+  font-size: 1.42rem; line-height: 1.4; letter-spacing: -.015em;
+  margin: 0 0 1rem; color: var(--fg-strong); font-weight: 800;
+}
+h3 {
+  font-size: 1.06rem; margin: 2rem 0 .6rem; color: var(--fg-strong);
+  font-weight: 700; letter-spacing: -.01em;
+}
+h2 + h3 { margin-top: 1.4rem; }
+h2, h3 { scroll-margin-top: 1rem; }
+
+p { margin: 0 0 1.1rem; }
+.lead { font-size: 1.1rem; color: var(--muted); margin-bottom: 1.6rem; }
+strong, b { color: var(--fg-strong); font-weight: 700; }
+a { color: var(--accent); }
+
+ul, ol { margin: 0 0 1.1rem; padding-left: 1.4rem; }
+li { margin: .3rem 0; }
+li > ul, li > ol { margin: .3rem 0; }
+
+blockquote {
+  margin: 1.4rem 0; padding: .2rem 0 .2rem 1.2rem;
+  border-left: 3px solid var(--rule); color: var(--muted);
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+/* 문서 머리 · 레이아웃 */
+.doc-head { max-width: var(--measure); margin: 0 auto; padding: 2.6rem 1.1rem 0; }
+.doc-head h1 { margin-bottom: .9rem; }
+.meta { font-size: .84rem; color: var(--muted); margin: 0 0 1.4rem; overflow-wrap: anywhere; }
+
+.layout { max-width: var(--measure); margin: 0 auto; padding: 0 1.1rem 6rem; }
+#doc { min-width: 0; }
+#doc > section { margin: 0 0 3.2rem; }
+
+#toc { margin: 0 0 1.6rem; border: 1px solid var(--rule); border-radius: 10px; background: var(--bg-soft); font-size: .88rem; }
+#toc summary { cursor: pointer; padding: .6rem 1rem; font-weight: 700; }
+#toc ol { list-style: none; margin: 0; padding: 0 1rem .8rem; }
+#toc li { margin: 0; }
+#toc ol ol { padding: 0 0 0 .9rem; }
+#toc a {
+  display: block; padding: .15rem 0 .15rem .6rem; line-height: 1.5;
+  color: var(--fg); text-decoration: none; border-left: 3px solid transparent;
+}
+#toc a:hover { color: var(--accent); }
+#toc a.here { border-left-color: var(--accent); color: var(--accent); font-weight: 700; }
+
+@media (min-width: 1100px) {
+  .doc-head { max-width: calc(14rem + 2.5rem + var(--measure)); padding-left: 0; }
+  .doc-head > * { margin-left: calc(14rem + 2.5rem); }
+  .layout { max-width: none; display: grid; grid-template-columns: 14rem minmax(0, var(--measure)); gap: 2.5rem; justify-content: center; }
+  #toc { position: sticky; top: 1.5rem; align-self: start; max-height: calc(100vh - 3rem); overflow-y: auto; border: 0; background: none; margin: 0; }
+  #toc summary { display: none; }
+}
+
+/* 박스 */
+.box {
+  margin: 1.5rem 0; padding: 1rem 1.15rem; border-radius: 10px;
+  border: 1px solid var(--rule); background: var(--card);
+  font-size: .96rem;
+}
+.box > :last-child { margin-bottom: 0; }
+.box .box-t {
+  font-size: .76rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; margin: 0 0 .45rem; color: var(--muted);
+}
+.box.note { border-left: 4px solid var(--accent); background: var(--accent-bg); }
+.box.note .box-t { color: var(--accent); }
+.box.warn { border-left: 4px solid var(--warn); background: var(--warn-bg); }
+.box.warn .box-t { color: var(--warn); }
+.box.good { border-left: 4px solid var(--good); background: var(--good-bg); }
+.box.good .box-t { color: var(--good); }
+.box.bad  { border-left: 4px solid var(--bad); background: var(--bad-bg); }
+.box.bad .box-t { color: var(--bad); }
+
+/* 접히는 상자 */
+details.fold {
+  margin: 1.4rem 0; border: 1px solid var(--rule); border-radius: 10px;
+  background: var(--card); overflow: hidden;
+}
+details.fold > summary {
+  cursor: pointer; padding: .7rem 1rem; font-size: .9rem; font-weight: 700;
+  color: var(--accent); list-style: none; display: flex; gap: .5rem; align-items: center;
+}
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold > summary::before { content: "▸"; font-size: .8rem; }
+details.fold[open] > summary::before { content: "▾"; }
+details.fold > summary:hover { background: var(--bg-soft); }
+details.fold .fold-body { padding: 0 1rem 1rem; font-size: .95rem; border-top: 1px solid var(--rule-soft); padding-top: .9rem; }
+details.fold .fold-body > :last-child { margin-bottom: 0; }
+
+/* 코드 */
+pre {
+  margin: 1.3rem 0; padding: 1rem 1.1rem; background: var(--code-bg);
+  border: 1px solid var(--rule); border-radius: 10px;
+  overflow-x: auto; font-size: .82rem; line-height: 1.7;
+}
+pre code, code {
+  font-family: Consolas, "D2Coding", "Cascadia Mono", ui-monospace, monospace;
+  color: var(--code-fg);
+}
+:not(pre) > code {
+  background: var(--code-bg); border: 1px solid var(--rule-soft);
+  border-radius: 5px; padding: .05em .35em; font-size: .88em;
+  word-break: keep-all; overflow-wrap: break-word;
+}
+pre .cap {
+  display: block; font-family: inherit; color: var(--muted);
+  font-size: .95em; margin-bottom: .5rem;
+}
+.hl { background: var(--hl-bg); border-radius: 3px; padding: .05em .2em; font-weight: 700; }
+pre.diff code { display: block; }
+pre.diff .add, pre.diff .del, pre.diff .hunk { display: inline-block; min-width: 100%; }
+pre.diff .add { background: var(--good-bg); }
+pre.diff .del { background: var(--bad-bg); }
+pre.diff .hunk { color: var(--muted); }
+
+/* 코드 해설: 번호 붙은 주석 목록 */
+ol.notes {
+  list-style: none; padding-left: 0; counter-reset: note; margin: 1rem 0 1.5rem;
+}
+ol.notes > li {
+  counter-increment: note; position: relative;
+  padding-left: 2.2rem; margin: .6rem 0; font-size: .95rem;
+}
+ol.notes > li::before {
+  content: counter(note); position: absolute; left: 0; top: .28rem;
+  width: 1.55rem; height: 1.55rem; border-radius: 50%;
+  background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent);
+  display: grid; place-items: center; font-size: .72rem; font-weight: 700;
+}
+ol.notes .ln {
+  display: inline-block; min-width: 3.6rem; font-weight: 700; color: var(--accent);
+  font-family: Consolas, "D2Coding", ui-monospace, monospace; font-size: .84rem;
+}
+ol.notes > li > p { margin: .2rem 0 0; }
+ol.notes > li > p:first-child { margin-top: 0; }
+
+/* 표 */
+.table-wrap { overflow-x: auto; margin: 1.4rem 0; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { border: 1px solid var(--rule); padding: .5rem .7rem; text-align: left; vertical-align: top; }
+th { background: var(--bg-soft); font-weight: 700; color: var(--fg-strong); }
+
+/* 다이어그램 */
+figure.fig { margin: 1.6rem 0; text-align: center; }
+figure.fig svg { max-width: 100%; height: auto; }
+figure.fig figcaption { font-size: .82rem; color: var(--muted); margin-top: .5rem; }
+.svg-fg { fill: var(--fg); }
+.svg-muted { fill: var(--muted); }
+.svg-line { stroke: var(--rule); fill: none; }
+
+/* 위젯 */
+.widget { margin: 1.5rem 0; padding: 1rem 1.15rem; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); }
+.widget figure.fig { margin: 0 0 .8rem; }
+.widget .ctl { display: flex; gap: .7rem; align-items: center; justify-content: center; flex-wrap: wrap; font-size: .88rem; }
+.widget button {
+  background: var(--bg); color: var(--fg); border: 1px solid var(--rule);
+  border-radius: 9px; padding: .4rem .95rem; font: inherit; font-size: .87rem;
+  font-weight: 600; cursor: pointer;
+}
+.widget button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.widget button:disabled { opacity: .35; cursor: default; }
+.widget .cur { font-weight: 700; color: var(--fg-strong); min-width: 6rem; text-align: center; }
+.widget .say { margin: .8rem 0 0; font-size: .92rem; color: var(--muted); text-align: center; }
+
+/* textbook-html book.css·book.js 의 퀴즈와 동일 — 고치면 양쪽 */
+/* 퀴즈 */
+.quiz {
+  margin: 1.5rem 0; padding: 1.1rem 1.25rem; border-radius: 12px;
+  border: 1px solid var(--rule); background: var(--card);
+}
+.quiz .qn { font-size: .74rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
+.quiz .q { font-weight: 700; color: var(--fg-strong); margin: 0 0 .8rem; }
+.quiz ol.options { list-style: none; margin: 0; padding: 0; counter-reset: opt; }
+.quiz ol.options li {
+  counter-increment: opt; margin: .4rem 0; padding: .55rem .8rem .55rem 2.4rem;
+  border: 1px solid var(--rule); border-radius: 9px; cursor: pointer;
+  position: relative; font-size: .95rem; background: var(--bg);
+  transition: background .12s, border-color .12s;
+}
+.quiz ol.options li::before {
+  content: counter(opt); position: absolute; left: .7rem; top: .55rem;
+  width: 1.3rem; height: 1.3rem; border-radius: 50%; background: var(--bg-soft);
+  border: 1px solid var(--rule); font-size: .76rem; font-weight: 700;
+  display: grid; place-items: center; color: var(--muted);
+}
+.quiz ol.options li:hover { border-color: var(--accent); }
+.quiz.done ol.options li { cursor: default; }
+.quiz.done ol.options li:hover { border-color: var(--rule); }
+.quiz ol.options li.pick-good { border-color: var(--good); background: var(--good-bg); }
+.quiz ol.options li.pick-good::before { content: "✓"; background: var(--good); color: #fff; border-color: var(--good); }
+.quiz ol.options li.pick-bad { border-color: var(--bad); background: var(--bad-bg); }
+.quiz ol.options li.pick-bad::before { content: "✕"; background: var(--bad); color: #fff; border-color: var(--bad); }
+.quiz .why {
+  display: none; margin-top: .45rem; padding-left: .2rem;
+  font-size: .88rem; color: var(--muted);
+}
+.quiz ol.options li.picked .why { display: block; }
+.quiz .explain {
+  display: none; margin-top: 1rem; padding-top: .9rem;
+  border-top: 1px solid var(--rule-soft); font-size: .93rem;
+}
+.quiz.done .explain { display: block; }
+.quiz .explain > :last-child { margin-bottom: 0; }
+.quiz .explain b.lbl { color: var(--accent); }
+
+@media (max-width: 600px) {
+  /* 그림은 줄이지 않고 그림 상자 안에서 가로로 민다 */
+  figure.fig { overflow-x: auto; }
+  figure.fig svg { min-width: 34rem; }
+  /* 3열 이상인 표는 글자가 세로로 쪼개지지 않게 최소 폭을 두고 표 상자 안에서 민다 */
+  .table-wrap table:has(tr > :nth-child(3)) { min-width: 32rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="doc-head">
+  <p class="kicker">설명 · ▣ 변경 / 이슈 / 개념</p>
+  <h1>▣ 제목 (명사구)</h1>
+  <p class="lead">▣ 무엇을 설명하는지, 다 읽으면 무엇을 알게 되는지 2~3줄.</p>
+  <p class="meta">▣ 대상 링크(PR URL·SHA) · 기준 커밋 · 작성일 · 읽는 시간 약 N분</p>
+</header>
+
+<div class="layout">
+  <nav id="toc" aria-label="목차"><details open><summary>목차</summary><ol></ol></details></nav><!-- JS 가 채운다 -->
+
+  <main id="doc">
+
+    <section id="background">
+      <h2>배경</h2>
+      <details class="fold">
+        <summary>기초 배경 — 이미 아시면 건너뛰세요</summary>
+        <div class="fold-body">
+          <p>▣ 이 설명을 읽는 데 꼭 필요한 기초만. 모르는 독자가 여기서 멈추지 않게.</p>
+        </div>
+      </details>
+      <p>▣ 위 기초에서 이 건의 좁은 배경으로 이어지는 연결 문장.</p>
+      <h3>▣ 좁은 배경</h3>
+      <p>▣ 이 변경·이슈가 왜 생겼는지, 어떤 상태에서 출발했는지.</p>
+    </section>
+
+    <section id="intuition">
+      <h2>핵심 직관</h2>
+      <!-- ▣ 그림은 인라인 SVG. 색은 클래스로만: .svg-fg(글자) .svg-muted(보조) .svg-line(선) -->
+      <figure class="fig">
+        <svg viewBox="0 0 640 90" role="img" aria-label="▣ 그림 설명">
+          <g class="svg-line" stroke-width="1.4">
+            <rect x="20" y="20" width="120" height="40" rx="6"/>
+            <path d="M140 40 H200"/>
+            <rect x="200" y="20" width="120" height="40" rx="6"/>
+          </g>
+          <g text-anchor="middle" font-size="12.5" font-weight="700" class="svg-fg">
+            <text x="80" y="38">▣ 왼쪽</text><text x="260" y="38">▣ 오른쪽</text>
+          </g>
+          <g text-anchor="middle" font-size="10" class="svg-muted">
+            <text x="80" y="53">▣ 한 줄 설명</text><text x="260" y="53">▣ 한 줄 설명</text>
+          </g>
+        </svg>
+        <figcaption>▣ 그림이 뜻하는 것 한 문장.</figcaption>
+      </figure>
+      <div class="box note">
+        <p class="box-t">정의</p>
+        <p>▣ 핵심 개념의 정의를 한두 문장으로.</p>
+      </div>
+    </section>
+
+    <section id="detail">
+      <h2>▣ 코드 훑기 / 원인 추적과 수정 / 동작 따라가기</h2>
+
+      <h3>▣ 묶음 1</h3>
+<pre><span class="cap"># ▣ 파일 경로</span><code>def example(x):
+    return <b class="hl">x + 1</b>
+</code></pre>
+
+<pre class="diff"><span class="cap">▣ 파일 경로 — 변경 전후</span><code>@@ -1,3 +1,3 @@
+ def example(x):
+-    return x
++    return x + 1
+</code></pre>
+
+      <ol class="notes">
+        <li><span class="ln">▣ 1행</span> 무엇을 하는지 + <b>왜 그렇게 썼는지.</b> 행 번호는 실제 코드와 대조한다.</li>
+        <li><span class="ln">▣ 3~4행</span> 바뀐 점과 그 결과.</li>
+      </ol>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th style="width:8rem">항목</th><th>뜻</th><th>▣ 비고</th></tr>
+          <tr><td><code>▣ foo</code></td><td>▣ 무엇인가</td><td>▣ 어디에 쓰이는가</td></tr>
+        </table>
+      </div>
+
+      <div class="box warn">
+        <p class="box-t">엣지 케이스</p>
+        <p>▣ 이 경우에는 다르게 동작한다는 점.</p>
+      </div>
+
+      <h3>▣ 묶음 2 — 단계별로 따라가기</h3>
+      <!-- ▣ 위젯: 값이 단계에 따라 바뀌는 것을 보여줄 때만 둔다. 아니면 이 .widget 블록과 아래 script 를 통째로 지운다.
+           STEPS 는 실제로 실행해 얻은 트레이스로 교체한다. id 접두어 w-, 색은 SVG 클래스만. -->
+      <div class="widget">
+        <figure class="fig">
+          <svg id="w-svg" viewBox="0 0 640 120" role="img" aria-label="▣ 단계별 상태 그림"></svg>
+        </figure>
+        <div class="ctl">
+          <button type="button" id="w-prev">이전</button>
+          <span class="cur" id="w-cur"></span>
+          <button type="button" id="w-next">다음</button>
+        </div>
+        <p class="say" id="w-say"></p>
+      </div>
+<script>
+(function () {
+  var STEPS = [  // ▣ 실제로 실행해 얻은 트레이스로 교체: vals = 칸 값, at = 지금 보는 칸, say = 설명
+    { vals: [3, 1, 2], at: 0, say: '▣ 첫 칸을 봅니다.' },
+    { vals: [3, 1, 2], at: 1, say: '▣ 둘째 칸으로 넘어갑니다.' },
+    { vals: [1, 3, 2], at: 1, say: '▣ 두 값을 맞바꿉니다.' }
+  ];
+  var svg = document.getElementById('w-svg'), cur = document.getElementById('w-cur'),
+      say = document.getElementById('w-say'), prev = document.getElementById('w-prev'),
+      next = document.getElementById('w-next'), k = 0, NS = 'http://www.w3.org/2000/svg';
+  function el(name, attrs, text) {
+    var e = document.createElementNS(NS, name);
+    for (var a in attrs) e.setAttribute(a, attrs[a]);
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function draw() {
+    var s = STEPS[k], w = 90, gap = 14, x0 = (640 - (s.vals.length * (w + gap) - gap)) / 2;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    s.vals.forEach(function (v, i) {
+      var x = x0 + i * (w + gap), on = i === s.at;
+      svg.appendChild(el('rect', { x: x, y: 20, width: w, height: 50, rx: 8, 'class': on ? 'svg-fg' : 'svg-line',
+        'fill-opacity': on ? '.18' : '0', 'stroke-width': on ? 2.5 : 1.4 }));
+      svg.appendChild(el('text', { x: x + w / 2, y: 52, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700, 'class': 'svg-fg' }, String(v)));
+      svg.appendChild(el('text', { x: x + w / 2, y: 92, 'text-anchor': 'middle', 'font-size': 11, 'class': 'svg-muted' }, '[' + i + ']'));
+    });
+    cur.textContent = '단계 ' + (k + 1) + ' / ' + STEPS.length;
+    say.textContent = s.say;
+    prev.disabled = k === 0;
+    next.disabled = k === STEPS.length - 1;
+  }
+  prev.addEventListener('click', function () { if (k > 0) { k--; draw(); } });
+  next.addEventListener('click', function () { if (k < STEPS.length - 1) { k++; draw(); } });
+  draw();
+})();
+</script>
+    </section>
+
+    <section id="quiz">
+      <h2>이해 확인 퀴즈</h2>
+      <!-- ▣ 총 5개. 정답 위치를 섞는다. data-answer 는 정답 li 의 1-기반 번호, 모든 li 에 data-why. 문제마다 .explain 으로 본문에 없는 이야기를 하나 얹는다. -->
+      <div class="quiz" data-answer="2">
+        <p class="q">▣ 질문 한 줄?</p>
+        <ol class="options">
+          <li data-why="▣ 왜 틀렸는지.">▣ 선택지 1</li>
+          <li data-why="▣ 왜 맞는지.">▣ 선택지 2</li>
+          <li data-why="▣ 왜 틀렸는지.">▣ 선택지 3</li>
+        </ol>
+        <div class="explain">
+          <p>▣ 본문에 없는 이야기를 하나 얹는다.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── 목차 ── */
+  function buildToc() {
+    var toc = document.getElementById('toc'), det = toc.querySelector('details'),
+        ol = toc.querySelector('ol'), links = [], targets = [];
+    Array.prototype.forEach.call(document.querySelectorAll('#doc > section[id]'), function (sec) {
+      var h2 = sec.querySelector('h2');
+      if (!h2) return;
+      var li = document.createElement('li');
+      li.appendChild(makeLink(h2, sec.id));
+      var h3s = sec.querySelectorAll('h3');
+      if (h3s.length) {
+        var sub = document.createElement('ol');
+        Array.prototype.forEach.call(h3s, function (h3, n) {
+          var sli = document.createElement('li');
+          sli.appendChild(makeLink(h3, sec.id + '-' + (n + 1)));
+          sub.appendChild(sli);
+        });
+        li.appendChild(sub);
+      }
+      ol.appendChild(li);
+    });
+    function makeLink(h, fallbackId) {
+      if (!h.id) h.id = fallbackId;
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      links.push(a); targets.push(h);
+      return a;
+    }
+    var mq = window.matchMedia('(min-width: 1100px)');
+    function sync() { det.open = mq.matches; }
+    sync();
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    ol.addEventListener('click', function (e) {
+      if (!mq.matches && e.target.closest && e.target.closest('a')) det.open = false;
+    });
+    markHere(links, targets);
+  }
+
+  /* 현재 위치: 화면 위쪽에 걸린 제목에 대응하는 목차 링크에 .here */
+  function markHere(links, targets) {
+    if (!('IntersectionObserver' in window)) return;
+    var visible = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { visible[en.target.id] = en.isIntersecting; });
+      var idx = -1;
+      targets.forEach(function (t, i) { if (visible[t.id] && idx < 0) idx = i; });
+      if (idx < 0) return;
+      links.forEach(function (a, i) { a.classList.toggle('here', i === idx); });
+    }, { rootMargin: '0px 0px -60% 0px' });
+    targets.forEach(function (t) { io.observe(t); });
+  }
+
+  /* ── diff 색칠: 첫 글자가 + - @ 인 줄 ── */
+  function markDiff() {
+    Array.prototype.forEach.call(document.querySelectorAll('pre.diff > code'), function (code) {
+      var lines = code.textContent.split('\n');
+      if (lines[lines.length - 1] === '') lines.pop();
+      code.textContent = '';
+      lines.forEach(function (line) {
+        var c = line.charAt(0), cls = c === '+' ? 'add' : c === '-' ? 'del' : c === '@' ? 'hunk' : '';
+        var node;
+        if (cls) { node = document.createElement('span'); node.className = cls; node.textContent = line; }
+        else node = document.createTextNode(line);
+        code.appendChild(node);
+        code.appendChild(document.createTextNode('\n'));
+      });
+    });
+  }
+
+  /* textbook-html book.js 의 initQuiz 와 동일 — 고치면 양쪽 */
+  function initQuiz(root) {
+    Array.prototype.forEach.call(root.querySelectorAll('.quiz'), function (quiz, qi) {
+      if (quiz.dataset.init) return;
+      var answer = parseInt(quiz.dataset.answer, 10);
+      var opts = quiz.querySelectorAll('ol.options > li');
+
+      var qn = quiz.querySelector('.qn');
+      if (!qn) {
+        qn = document.createElement('p');
+        qn.className = 'qn';
+        qn.textContent = '퀴즈 ' + (qi + 1);
+        quiz.insertBefore(qn, quiz.firstChild);
+      }
+
+      Array.prototype.forEach.call(opts, function (li, i) {
+        if (li.dataset.why) {
+          var why = document.createElement('div');
+          why.className = 'why';
+          why.textContent = li.dataset.why;
+          li.appendChild(why);
+        }
+        // 키보드로도 고를 수 있게 한다(Tab 으로 옮기고 Enter·Space 로 고른다)
+        li.setAttribute('tabindex', '0');
+        li.setAttribute('role', 'button');
+        li.addEventListener('keydown', function (e) {
+          if (e.target !== li) return;
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.click(); }
+        });
+        li.addEventListener('click', function (e) {
+          if (e.target.closest && e.target.closest('a, .term')) return;
+          if (quiz.classList.contains('done')) return;
+          var picked = i + 1;
+          li.classList.add('picked', picked === answer ? 'pick-good' : 'pick-bad');
+          if (picked !== answer && opts[answer - 1]) {
+            opts[answer - 1].classList.add('pick-good', 'picked');
+          }
+          quiz.classList.add('done');
+        });
+      });
+      quiz.dataset.init = '1';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    buildToc();
+    markDiff();
+    initQuiz(document);
+  });
+})();
+</script>
+</body>
+</html>
