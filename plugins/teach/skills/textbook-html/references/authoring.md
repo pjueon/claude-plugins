@@ -157,6 +157,9 @@ chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=9000 \
 8. **일괄 치환으로 수식이 깨지는 것** — 파이썬 등으로 본문을 치환할 때 일반 문자열 안의 `\tfrac`·`\text`·`\theta` 의 `\t` 가
    탭 문자로 바뀌어 수식이 조용히 깨진다. 치환 문자열은 raw 로 쓰고, 끝나면
    `grep -nP "[\x00-\x08\x0b\x0c\x0e-\x1f]" docs/chNN.html` 이 0건인지 확인한다. 코드 블록(`pre`)은 의도한 변경 외에 diff 가 없어야 한다.
+9. **후공개 장에서 답을 흘리는 것** — 예시 코드·퀴즈 해설 등 본문 어딘가에 과제의 답이 드러나면 후공개의 의미가 없다.
+   자리표시자(`details.fold answer` 의 `fold-body`)에는 `<!-- teach:answer-pending -->` 마커와 정해진 문구만 둔다.
+   점검은 `grep -c "teach:answer-pending" docs/chNN.html`.
 
 ## 진도 저장 주의
 
