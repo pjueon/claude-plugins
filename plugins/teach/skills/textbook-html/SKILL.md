@@ -7,7 +7,7 @@ description: >-
   하이라이팅을 맡고, 필요하면 그림·그래프·**인터랙티브 위젯**도 직접 만들어 넣습니다.
   코드뿐 아니라 수학·알고리즘·공학·업무 지식도 대상입니다. "이 주제로 교재 만들어줘",
   "학습 자료 만들어줘", "커리큘럼 짜줘", "다음 장 써줘" 처럼 사람이 명시적으로 부르거나
-  `teach:hands-on` 세션이 Skill 도구로 부를 때 씁니다.
+  `teach:hands-on` 세션이나 `teach:explain-html` 이 사용자 확인 후 Skill 도구로 부를 때 씁니다.
 ---
 
 # textbook-html — 학습 교재(HTML) 집필 도구
@@ -180,6 +180,7 @@ cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해
 - `teach:hands-on` 세션: Skill 도구로 부른다. args 는 아래 두 형식이다.
   - `teach 연동: <N>장 집필` (후공개 여부는 args 가 아니라 장부의 "답안" 칸을 따른다)
   - `teach 연동: <N>장 답안공개, 학습자 구현 <sha>..<sha>`
+- `teach:explain-html` 이 사용자 확인 후 넘길 때: 넘겨받은 주제·근거 요약으로 절차 1)부터 진행한다(교재 폴더는 explain-html 이 사용자에게 확인한 곳).
 
 hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/orchestration.md` 의
 "다음 장으로 이어 간다" 기본값보다 이 규칙이 우선한다. 이 스킬에는
@@ -227,6 +228,8 @@ hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/
 | `references/authoring.md` | 장 집필 순서, 점검 명령, 한국어 문체, 자주 틀리는 것 (집필·리뷰 에이전트용) |
 | `references/orchestration.md` | 오케스트레이터 루프, 진행 장부, 병렬화 조건, 기존 장 문체 교정 패스 |
 | `../../agents/` | `textbook-writer`, `textbook-reviewer` 서브에이전트 정의 |
+
+퀴즈 마크업(`.quiz[data-answer]` · `ol.options > li[data-why]` · `.qn` · `pick-good`/`pick-bad`/`done`)은 `../explain-html/templates/explain.html` 과 동일 계약이다. 한쪽을 바꾸면 다른 쪽도 맞춘다(비교 명령은 `../explain-html/references/checklist.md` §3).
 
 ## 비목표
 
