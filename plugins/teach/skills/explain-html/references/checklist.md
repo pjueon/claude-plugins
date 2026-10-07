@@ -36,7 +36,9 @@ window.addEventListener('load', function () {
           && (pick === a - 1 || li[pick].classList.contains('pick-bad')))) bad++;
   });
   r.push('quizBad=' + bad, 'answers=' + ans.join(''));
-  r.push('placeholders=' + (document.body.innerHTML.match(/▣/g) || []).length);
+  var c = document.body.cloneNode(true);   // probe 스크립트 자신과 코드 인용은 빼고 센다
+  c.querySelectorAll('script, pre').forEach(function (n) { n.remove(); });
+  r.push('placeholders=' + (c.innerHTML.match(/▣/g) || []).length);
   r.push('chars=' + document.getElementById('doc').innerText.length);
   r.push('errors=' + __errs.length + (__errs.length ? ' ' + __errs.join(' | ') : ''));
   var o = document.createElement('pre'); o.id = 'probe-out'; o.textContent = r.join(' '); document.body.appendChild(o);
@@ -54,9 +56,13 @@ C="/c/Program Files/Google/Chrome/Application/chrome.exe"
 
 | 조합 | 추가 플래그 | 기대 |
 |---|---|---|
-| 데스크톱·라이트 | `--window-size=1280,1000` | `pageOverflow=0 quizBad=0 errors=0 placeholders=0` |
+| 데스크톱·라이트 | `--window-size=1280,1000` (라이트가 기본이다. 시스템이 다크면 `scheme=` 로 확인하고, 사본의 `prefers-color-scheme: dark` 를 다른 값으로 바꿔 라이트를 강제한다) | `pageOverflow=0 quizBad=0 errors=0 placeholders=0` |
 | 데스크톱·다크 | `--force-dark-mode` | 위와 같음. `scheme=dark` 가 나와야 실제로 다크로 본 것이다 |
-| 모바일 | `--window-size=390,844` | `pageOverflow=0` (`pre` 는 상자 안 스크롤이라 넘침 허용) |
+| 모바일 | headless 는 창 폭을 500 이상으로 올릴 수 있으므로, **390px 폭 `iframe` 을 담은 래퍼 페이지**에서 `contentDocument.documentElement.scrollWidth - clientWidth` 를 잰다(`--allow-file-access-from-files` 필요) | `pageOverflow=0` (`pre` 는 상자 안 스크롤이라 넘침 허용) |
+
+`pre` 안의 `▣`(인용한 코드·diff 에 원문으로 들어 있는 경우)는 위 `placeholders` 에 안 잡히므로 `grep -n ▣ file.html` 로 직접 확인한다. 데스크톱에서 `preOverflow` 가 0 이 아닌 것은 긴 줄이 상자 안에서 가로로 스크롤되는 것이라 허용한다.
+
+`chars` 는 `innerText` 라서 접힌 `details` 본문이 빠진다. 읽는 시간은 SKILL.md E7 의 공식으로 어림한다. 스크린샷 경로는 Windows 에서 절대경로(`cygpath -w`)여야 한다.
 
 그 밖의 기대값: `sections=background,intuition,detail,quiz`, `quiz=5`, `answers` 에 한 번호가
 몰려 있지 않음(예: `21342`), `chars` 가 대략 12,000자 이하(넘으면 줄이거나 textbook-html 을 제안).
@@ -82,12 +88,4 @@ grep -nP '[\x{2500}-\x{257F}]|\+-{3,}\+' file.html                              
 
 ## 3. 퀴즈 마크업 계약 비교 (템플릿 또는 textbook-html 런타임을 고쳤을 때)
 
-템플릿의 `initQuiz` 와 퀴즈 CSS 는 `textbook-html` 의 사본이다. 한쪽을 고치면 다른 쪽도 맞춘다.
-
-```bash
-B=plugins/teach/skills/textbook-html/templates/assets; E=plugins/teach/skills/explain-html/templates/explain.html
-diff <(sed -n '/^  function initQuiz/,/^  }$/p' $B/book.js) <(sed -n '/^  function initQuiz/,/^  }$/p' $E) && echo JS-SAME
-diff <(sed -n '/^\/\* 퀴즈 \*\//,/^\.quiz \.explain b\.lbl/p' $B/book.css) <(sed -n '/^\/\* 퀴즈 \*\//,/^\.quiz \.explain b\.lbl/p' $E) && echo CSS-SAME
-```
-
-동작 확인은 `textbook-html/templates/_smoke.html` 의 퀴즈 단정(128~138행)을 템플릿 사본에 붙여 돌린다.
+`../../../shared/quiz.md` 의 비교 명령을 돌린다.

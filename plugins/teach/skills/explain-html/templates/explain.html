@@ -459,7 +459,7 @@ figure.fig figcaption { font-size: .82rem; color: var(--muted); margin-top: .5re
 (function () {
   'use strict';
 
-  /* ── 목차 ── */
+  /* 목차 */
   function buildToc() {
     var toc = document.getElementById('toc'), det = toc.querySelector('details'),
         ol = toc.querySelector('ol'), links = [], targets = [];
@@ -512,7 +512,7 @@ figure.fig figcaption { font-size: .82rem; color: var(--muted); margin-top: .5re
     targets.forEach(function (t) { io.observe(t); });
   }
 
-  /* ── diff 색칠: 첫 글자가 + - @ 인 줄 ── */
+  /* diff 색칠: 첫 글자가 + - @ 인 줄 */
   function markDiff() {
     Array.prototype.forEach.call(document.querySelectorAll('pre.diff > code'), function (code) {
       var lines = code.textContent.split('\n');

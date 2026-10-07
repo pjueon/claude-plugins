@@ -38,17 +38,17 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Skill, Agent
   - **상세**: 변경이면 코드를 이해하기 좋은 순서로 묶어 훑고, 버그면 원인을 추적하고,
     개념이면 동작을 단계별로 따라간다.
 - **E4 그림은 HTML·SVG 로.** ASCII 도식을 쓰지 않는다. 도식 계열은 1~3개만 정해 재사용하고
-  도식에는 예시 데이터를 넣는다. 코드는 반드시 `<pre>` 에 넣는다. 값을 움직여 보일 것이
-  있으면 위젯을 만든다 — 지침은 `../textbook-html/SKILL.md` 의 "시각화" 절을 따른다.
+  도식에는 예시 데이터를 넣는다. 도식·위젯에 필요한 CSS 클래스는 템플릿 `<style>` 끝에 추가해도 된다(색은 변수로). 코드는 반드시 `<pre>` 에 넣는다. 값을 움직여 보일 것이
+  있으면 위젯을 만든다 — 지침은 `../../shared/visuals.md` 를 따른다.
   핵심 개념·정의·엣지 케이스는 콜아웃(`.box`)으로 눈에 띄게 한다.
-- **E5 문체.** `../textbook-html/references/authoring.md` 의 "한국어 문체" 절을 따른다
-  (섹션명은 명사구, 번역투·은유·의인화·AI 말투 금지, 한 문장에 한 주장).
+- **E5 문체.** `../../shared/writing-style.md` 를 따른다
+  (섹션명은 명사구, 번역투·은유·의인화·AI 말투 금지, 한 문장에 한 주장). 섹션명 규칙은 h2·h3·콜아웃 제목에 적용하고, 템플릿이 정한 접는 배경의 summary 문구는 그대로 둔다.
 - **E6 퀴즈.** 5문, 중간 난이도, 함정 없는 객관식이다. 본문의 실질을 이해해야 풀리되
   꼬아 묻지 않는다. 모든 선택지에 `data-why`(왜 맞고 왜 틀리는지)를 달고 정답 위치를
   고르게 섞는다. **마크업은 textbook-html 의 퀴즈와 같은 계약**이다
-  (`.quiz[data-answer]` · `ol.options > li[data-why]` · `.qn`) — 템플릿의 `initQuiz`·퀴즈 CSS 는
-  `textbook-html/templates/assets` 의 사본이다.
-- **E7 분량은 한 번에 읽을 만큼(15~25분).** 넘칠 것 같거나 선행지식 사슬이 길거나 퀴즈 5문으로
+  (`../../shared/quiz.md`) — 템플릿의 `initQuiz`·퀴즈 CSS 는 `textbook-html/templates/assets` 의 사본이다.
+  `.qn` 은 비워 두면 런타임이 "퀴즈 N" 을 넣는다.
+- **E7 분량은 한 번에 읽을 만큼(15~25분).** 읽는 시간은 본문 글자 수(접힌 배경 포함, 코드 제외)를 분당 약 500자로 나누고 퀴즈 시간을 더해 어림한다. 넘칠 것 같거나 선행지식 사슬이 길거나 퀴즈 5문으로
   부족하면 아래 "textbook-html 연계"를 따른다.
 
 ## 절차
@@ -94,7 +94,8 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Skill, Agent
 |---|---|
 | `templates/explain.html` | 자체 완결 골격 — 목차·접는 배경·콜아웃·diff 줄 색·퀴즈·단계 위젯 예시 |
 | `references/sources.md` | 대상 종류별 근거 수집 방법, 실패 처리, 상세 절 구성 |
-| `references/checklist.md` | 저장 전 점검 — probe 스크립트, 내용 점검, 퀴즈 계약 비교 |
+| `references/checklist.md` | 저장 전 점검 — probe 스크립트, 내용 점검 |
+| `../../shared/` | teach 스킬 공통 기준 — `writing-style.md`(문체), `visuals.md`(그림·위젯), `quiz.md`(퀴즈 계약) |
 
 ## 비목표
 
