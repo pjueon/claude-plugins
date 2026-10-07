@@ -22,11 +22,6 @@
       "description": "Antigravity CLI(agy)로 Google nano banana 이미지 생성 엔진을 호출해 이미지를 생성·편집하는 스킬"
     },
     {
-      "name": "brain-vault",
-      "source": "./plugins/brain-vault",
-      "description": "BRAIN_VAULT_PATH 환경변수로 Brain Obsidian 볼트 경로를 찾아 어디서든 노트를 검색·열람·편집하는 스킬"
-    },
-    {
       "name": "youtube",
       "source": "./plugins/youtube",
       "description": "yt-dlp로 유튜브 영상을 검색·요약·다운로드하는 스킬. 멤버십 영상은 Firefox 전용 프로파일 쿠키로 인증"
