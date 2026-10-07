@@ -40,20 +40,41 @@ description: >-
 
 ### 1회성 셋업 (사용자가 GUI에서 직접)
 
-1. 전용 프로파일 생성 (PowerShell):
-   ```powershell
-   & "C:\Program Files\Mozilla Firefox\firefox.exe" -CreateProfile "ytdlp $env:USERPROFILE\firefox-ytdlp"
-   ```
+1. 전용 프로파일 생성:
+   - Windows (PowerShell):
+     ```powershell
+     & "C:\Program Files\Mozilla Firefox\firefox.exe" -CreateProfile "ytdlp $env:USERPROFILE\firefox-ytdlp"
+     ```
+   - Linux (bash):
+     ```bash
+     firefox -CreateProfile "ytdlp $HOME/firefox-ytdlp"
+     ```
 2. 그 프로파일로 Firefox를 띄워 **유튜브에 로그인**(멤버십 계정):
-   ```powershell
-   & "C:\Program Files\Mozilla Firefox\firefox.exe" -P "ytdlp" -no-remote
-   ```
+   - Windows:
+     ```powershell
+     & "C:\Program Files\Mozilla Firefox\firefox.exe" -P "ytdlp" -no-remote
+     ```
+   - Linux:
+     ```bash
+     firefox -P "ytdlp" -no-remote
+     ```
 3. 경로를 환경변수로 영구 등록:
-   ```powershell
-   [Environment]::SetEnvironmentVariable("YT_FIREFOX_PROFILE", "$env:USERPROFILE\firefox-ytdlp", "User")
-   ```
-   → 등록 후에는 **터미널/IDE를 재시작**해야 새 값이 잡힌다. 단, 지금 세션에서는
-   사용자가 알려준 경로를 변수에 바로 넣어 이어서 작업하면 된다.
+   - Windows:
+     ```powershell
+     [Environment]::SetEnvironmentVariable("YT_FIREFOX_PROFILE", "$env:USERPROFILE\firefox-ytdlp", "User")
+     ```
+   - Linux (쉘 설정 파일에 추가. zsh면 `~/.zshrc`):
+     ```bash
+     echo 'export YT_FIREFOX_PROFILE="$HOME/firefox-ytdlp"' >> ~/.bashrc
+     ```
+
+   → 등록 후에는 **터미널/IDE를 재시작**(Linux는 `source ~/.bashrc`도 가능)해야 새 값이 잡힌다.
+   단, 지금 세션에서는 사용자가 알려준 경로를 변수에 바로 넣어 이어서 작업하면 된다.
+
+> Linux 참고: GUI 로그인(2단계)에는 데스크톱 환경이 필요하다. 서버처럼 GUI가 없으면 GUI가 있는
+> PC에서 프로파일을 만들어 로그인한 뒤 그 디렉터리를 서버로 복사해 `YT_FIREFOX_PROFILE`로 지정한다.
+> snap/flatpak 패키지 Firefox는 샌드박스 때문에 숨김 폴더(`.`으로 시작) 밖, 홈 아래 일반 경로에
+> 프로파일을 두는 편이 안전하다(위 예시 경로가 그렇다).
 
 > 로그인 상태는 프로파일에 저장되므로, 한 번 로그인해 두면 이후 호출은 무인으로 동작한다.
 > 쿠키는 수주~수개월 유지되며 사이트 재방문 시 자동 갱신된다. 만료되면 2단계 GUI 로그인만
@@ -73,7 +94,7 @@ COMMON="--cookies-from-browser firefox:$YT_FIREFOX_PROFILE/ --js-runtimes node -
   뒤에 프로파일 디렉터리 절대 경로(끝에 `/` 권장).
 - `--js-runtimes node` — 시스템 PATH의 `node`를 챌린지 솔버 런타임으로 쓴다(node 설치돼
   있음). **전체 경로를 쓰지 말 것**(경로 공백이 단어분리로 깨진다). 이름 `node`만 주면
-  yt-dlp가 PATH에서 `node.exe`를 찾는다.
+  yt-dlp가 PATH에서 `node`(Windows는 `node.exe`)를 찾는다.
 - `--remote-components ejs:github` — 챌린지 솔버 스크립트(EJS)를 GitHub에서 받아 캐시한다.
   이게 없으면 `n challenge solving failed` → "Only images are available"로 실패한다.
 
