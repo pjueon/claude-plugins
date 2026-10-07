@@ -146,8 +146,8 @@ cp    <skill>/templates/ch-template.html docs/ch00.html    # 장마다 복사해
 
 ### 4) 장 집필 — 오케스트레이션
 
-**메인은 오케스트레이터만 한다.** 장 본문은 `textbook-html:textbook-writer` 가 쓰고,
-`textbook-html:textbook-reviewer` 가 검수하고, 메인이 장마다 커밋한다.
+**메인은 오케스트레이터만 한다.** 장 본문은 `teach:textbook-writer` 가 쓰고,
+`teach:textbook-reviewer` 가 검수하고, 메인이 장마다 커밋한다.
 루프·진행 장부·병렬화 조건·지시서 내용은 `references/orchestration.md`.
 집필자가 따르는 집필 순서와 점검 명령은 `references/authoring.md`.
 

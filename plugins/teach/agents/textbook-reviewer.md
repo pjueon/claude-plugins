@@ -1,6 +1,6 @@
 ---
 name: textbook-reviewer
-description: textbook-html 교재의 장 하나를 집필자와 독립된 시각으로 검수해 PASS/FIX 와 지적 목록을 보고한다. 오케스트레이터가 호출한다. 파일을 수정하지 않는다.
+description: teach 플러그인 textbook-html 스킬의 교재의 장 하나를 집필자와 독립된 시각으로 검수해 PASS/FIX 와 지적 목록을 보고한다. 오케스트레이터가 호출한다. 파일을 수정하지 않는다.
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---

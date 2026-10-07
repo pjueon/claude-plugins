@@ -5,8 +5,8 @@
 | 역할 | 누가 | 하는 일 |
 |---|---|---|
 | 오케스트레이터 | 메인 | 지시서 작성, 장부 관리, 판정 처리, 병렬 판단, **커밋**, 보고 |
-| 집필 | `textbook-html:textbook-writer` | 장 하나 집필·자체 점검·지적 반영 |
-| 리뷰 | `textbook-html:textbook-reviewer` | 독립 검수, PASS/FIX 판정 (수정 안 함) |
+| 집필 | `teach:textbook-writer` | 장 하나 집필·자체 점검·지적 반영 |
+| 리뷰 | `teach:textbook-reviewer` | 독립 검수, PASS/FIX 판정 (수정 안 함) |
 
 기획·커리큘럼·골격 세우기(SKILL.md 절차 1~3)는 사용자와 대화가 필요하므로 메인이 직접 한다.
 

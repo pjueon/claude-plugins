@@ -1,6 +1,6 @@
 ---
 name: textbook-writer
-description: textbook-html 교재의 장 하나를 집필(또는 리뷰 지적 반영 수정)하고 자체 점검 결과를 보고한다. 오케스트레이터가 호출한다. 커밋하지 않는다.
+description: teach 플러그인 textbook-html 스킬의 교재의 장 하나를 집필(또는 리뷰 지적 반영 수정)하고 자체 점검 결과를 보고한다. 오케스트레이터가 호출한다. 커밋하지 않는다.
 tools: Read, Grep, Glob, Bash, Write, Edit
 model: inherit
 ---
