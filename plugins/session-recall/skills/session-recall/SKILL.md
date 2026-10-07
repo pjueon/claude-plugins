@@ -1,92 +1,41 @@
 ---
 name: session-recall
 description: >-
-  Search and recall the user's past conversations with AI coding agents (Claude
-  Code and others) using the local `cass` CLI. Use whenever the user wants to
-  find or revisit something from an earlier session — "didn't we talk about X
-  before?", "what did I work on last week?", "find that session where we fixed
-  the auth bug". Searches conversation history, not the current codebase (use
-  Grep/Glob for files).
+  사용자의 과거 Claude Code 세션 대화를 로컬 로그에서 찾아 회상한다. "예전에
+  X 얘기한 적 있지?", "지난주에 뭐 했지?", "그 인증 버그 고치던 세션 찾아줘"처럼
+  이전 대화를 다시 확인하고 싶을 때 사용한다. 대화 기록을 검색하는 스킬이며
+  현재 코드베이스 검색(Grep/Glob)과는 다르다.
 ---
 
 # session-recall
 
-Recall the user's past AI coding-agent conversations via `cass`
-(coding-agent-search), a local CLI that indexes session logs from Claude Code
-and ~20 other agents into one searchable archive. Runs fully locally.
+`~/.claude/projects/<프로젝트>/<세션ID>.jsonl`에 저장된 Claude Code 로컬 세션을
+`scripts/recall.py`(Python 3, 표준 라이브러리만 사용)로 읽는다. 인덱스나 외부 도구가
+없어 항상 최신 상태이고 별도 설치가 필요 없다. 다른 에이전트의 세션은 대상이 아니다.
 
-Use this when the user reaches back to an earlier conversation ("last time",
-"before", "last week", "remember when…"). If they instead want to grep the
-current repo's files, that's Grep/Glob — not this skill.
+스크립트 경로는 이 스킬 폴더 기준 `scripts/recall.py`이다. 아래에서 `recall`은
+`python <스킬 폴더>/scripts/recall.py`를 뜻한다. 출력이 한글이므로 Windows에서도 UTF-8로 출력된다.
 
-## Golden rule: never launch the TUI
-
-`cass` defaults to a full-screen TUI you can't drive. Pass `--robot` (alias
-`--json`) to **every** data command so output is JSON on stdout. A bare `cass`
-or `cass search "x"` without it opens the TUI and hangs. stdout = data,
-stderr = logs, exit 0 = success.
-
-## Workflow
-
-### 0. Ensure cass is installed
-
-Run `cass --version`. If it fails (not found), read
-[references/install.md](references/install.md) for the OS-specific install
-command and confirm with the user before running it.
-
-### 1. Check readiness and freshness
-
-`cass` searches an **index** and does **not** auto-sync — conversations created
-since the last index are invisible until you re-index. Run `cass triage --json`:
-
-- If `not_initialized`: build the archive once with `cass index --full --json
-  --no-progress-events` (scans all local logs; can take a while).
-- Otherwise, prefer adding `--refresh` to your search/pack in step 2 — it folds
-  in new conversations and is a no-op when already current. For an explicit sync
-  without searching (e.g. "update my history first"): `cass index --json
-  --no-progress-events`.
-
-Exit codes guide retries: `3` = index missing (run `index --full`), `4` =
-network, `7` = lock/busy (wait), `0` = success.
-
-### 2. Answer the question
-
-All of these accept time filters (`--today`, `--yesterday`, `--week`,
-`--days N`, `--since`, `--until`) and `--agent <slug>` / `--workspace <path>`.
-
-- **Find a past topic** → `cass search "jwt refresh bug" --robot --refresh
-  --limit 8`. Default mode is hybrid; force `--mode lexical|semantic` if results
-  are off. Each hit has `source_path` + `line_number` (needed for step 3). Trim
-  with `--limit`, `--fields summary`, or `--max-content-length`.
-- **"What did I do last week?"** → `cass timeline --week --json --group-by day`
-  — an activity overview rather than message hits. Then drill in with a search.
-- **List recent sessions** → `cass sessions --json --limit 10`, or
-  `cass sessions --current --json` for the current directory.
-- **Overview / counts** ("which agent did I use most?") → `cass search "*"
-  --json --aggregate agent,date --week`.
-
-### 3. Drill into a hit
+## 사용법
 
 ```bash
-cass view <source_path> -n <line> -C 8 --json     # lines around a hit
-cass expand <source_path> -n <line> --json        # messages around a hit
-cass export <source_path> --format markdown       # full session as markdown
+recall list   --days 7 --limit 15            # 최근 세션: ID, 시각, 작업 폴더, 제목
+recall search jwt refresh --days 30          # 모든 단어를 포함한 메시지 검색(user/assistant 텍스트)
+recall show 707dc646                         # 세션 전체 대화(ID는 앞 8자면 충분)
+recall show 707dc646 --grep jwt --context 3  # 검색어 주변 메시지만
 ```
 
-`cass resume <source_path> --json` gives a command to reopen the session in its
-native agent. `cass pack "question" --robot --max-tokens 4000` builds a bounded,
-cited bundle to carry findings into another prompt.
+공통 필터: `--project <폴더명 일부>`(예: `claude-workspace`), `--days N`, `--limit N`.
+`search`는 `--role user|assistant`로 화자를 제한할 수 있다.
 
-## Keep output lean
+## 진행 방식
 
-Start narrow (small `--limit`, a time filter, `--fields summary`). Prefer
-`timeline` / `--aggregate` for overviews, `search` only when the user wants
-specific messages. Summarize findings in prose with `source_path:line`
-references — don't dump raw JSON at the user.
+1. 기간·주제가 모호하면 `list`로 먼저 범위를 잡고, 주제가 있으면 `search`로 후보 세션을 찾는다.
+2. 후보가 나오면 `show <ID> --grep <검색어>`로 해당 부분만 확인한다. 전체 출력은 길 수 있으니 꼭 필요할 때만 쓴다.
+3. 사용자에게는 원문을 쏟아붓지 말고 요약해 답한다. 근거로 세션 ID(앞 8자)와 시각을 함께 알려 준다.
 
-## When unsure, ask cass — it's self-describing
+## 주의
 
-`cass <cmd> --help` (flags), `cass capabilities --json` (features, agent slugs,
-exit codes), `cass robot-docs examples` (cheat sheet), `cass triage --json`
-(readiness + next command). Deeper reference:
-[references/cass-reference.md](references/cass-reference.md).
+- 사용자 발화와 어시스턴트 텍스트만 검색된다. 도구 호출·결과·thinking, 서브에이전트 대화는 제외된다.
+- 검색은 대소문자 무시 단순 부분 일치라서 의미 검색은 안 된다. 결과가 없으면 동의어·영문/한글 표기를 바꿔 다시 시도한다.
+- `/clear` 이후에도 이전 세션 파일은 남아 있으므로 그 세션들도 검색된다. 현재 세션도 결과에 포함될 수 있다.

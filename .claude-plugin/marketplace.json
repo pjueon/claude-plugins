@@ -14,7 +14,7 @@
     {
       "name": "session-recall",
       "source": "./plugins/session-recall",
-      "description": "cass CLI로 과거 AI 코딩 세션을 검색·회상하는 스킬"
+      "description": "Claude Code 로컬 세션 로그에서 과거 대화를 검색·회상하는 스킬"
     },
     {
       "name": "nanobanana",
