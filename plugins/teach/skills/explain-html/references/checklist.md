@@ -30,7 +30,7 @@ window.addEventListener('load', function () {
     var a = +q.dataset.answer, li = q.querySelectorAll('ol.options > li'); ans.push(a);
     if (!(a >= 1 && a <= li.length)) { bad++; return; }
     li.forEach(function (x) { if (!x.dataset.why || !x.querySelector('.why')) bad++; });
-    var pick = (i % 2) ? a - 1 : a % li.length;   // 짝수 번째 문제는 오답, 홀수 번째는 정답을 누른다
+    var pick = (i % 2) ? a - 1 : a % li.length;   // 첫째·셋째·다섯째 문제는 오답을, 둘째·넷째 문제는 정답을 누른다
     li[pick].click();
     if (!(q.classList.contains('done') && li[a - 1].classList.contains('pick-good')
           && (pick === a - 1 || li[pick].classList.contains('pick-bad')))) bad++;
@@ -38,7 +38,7 @@ window.addEventListener('load', function () {
   r.push('quizBad=' + bad, 'answers=' + ans.join(''));
   var c = document.body.cloneNode(true);   // probe 스크립트 자신과 코드 인용은 빼고 센다
   c.querySelectorAll('script, pre').forEach(function (n) { n.remove(); });
-  r.push('placeholders=' + (c.innerHTML.match(/▣/g) || []).length);
+  r.push('placeholders=' + ((c.innerHTML.match(/▣/g) || []).length + (document.title.match(/▣/g) || []).length));
   r.push('chars=' + document.getElementById('doc').innerText.length);
   r.push('errors=' + __errs.length + (__errs.length ? ' ' + __errs.join(' | ') : ''));
   var o = document.createElement('pre'); o.id = 'probe-out'; o.textContent = r.join(' '); document.body.appendChild(o);
@@ -56,7 +56,7 @@ C="/c/Program Files/Google/Chrome/Application/chrome.exe"
 
 | 조합 | 추가 플래그 | 기대 |
 |---|---|---|
-| 데스크톱·라이트 | `--window-size=1280,1000` (라이트가 기본이다. 시스템이 다크면 `scheme=` 로 확인하고, 사본의 `prefers-color-scheme: dark` 를 다른 값으로 바꿔 라이트를 강제한다) | `pageOverflow=0 quizBad=0 errors=0 placeholders=0` |
+| 데스크톱·라이트 | `--window-size=1280,1000 --blink-settings=preferredColorScheme=1` (시스템 설정을 따르므로 기본값이 다크일 수 있다. 실제로 적용됐는지는 `scheme=` 출력이 알려 준다) | `pageOverflow=0 quizBad=0 errors=0 placeholders=0` |
 | 데스크톱·다크 | `--force-dark-mode` | 위와 같음. `scheme=dark` 가 나와야 실제로 다크로 본 것이다 |
 | 모바일 | headless 는 창 폭을 500 이상으로 올릴 수 있으므로, **390px 폭 `iframe` 을 담은 래퍼 페이지**에서 `contentDocument.documentElement.scrollWidth - clientWidth` 를 잰다(`--allow-file-access-from-files` 필요) | `pageOverflow=0` (`pre` 는 상자 안 스크롤이라 넘침 허용) |
 
@@ -83,9 +83,10 @@ grep -nP '[\x{2500}-\x{257F}]|\+-{3,}\+' file.html                              
 - 퀴즈 5문이 본문만으로 풀리는가. 함정 문제가 없는가. 정답 위치가 고른가. `data-why` 가 "왜 맞고
   왜 틀리는지"를 말하는가.
 - 배경 접기 앞뒤에 연결 문장이 있는가. 절과 절 사이의 전환이 매끄러운가.
-- h2·h3·`summary`·`.box-t` 를 전부 훑어 `authoring.md` "한국어 문체"의 섹션명 규칙(명사구)을 지켰는가.
+- h2·h3·`summary`·`.box-t` 를 전부 훑어 `../../../shared/writing-style.md` 의 섹션명 규칙(명사구)을 지켰는가. 템플릿이 정한 접는 배경 summary 문구("기초 배경 — 이미 아시면 건너뛰세요")는 예외다.
+- 인용한 코드·diff 가 `git show` 등의 **원문 그대로**인가(hunk 헤더 포함. 줄이거나 생략한 곳은 `…` 로 표시한다).
 - 근거를 얻지 못한 부분이 머리 메타나 본문에 "확인하지 못함"으로 적혀 있는가.
 
 ## 3. 퀴즈 마크업 계약 비교 (템플릿 또는 textbook-html 런타임을 고쳤을 때)
 
-`../../../shared/quiz.md` 의 비교 명령을 돌린다.
+`../../../shared/quiz.md` 의 "정본과 사본" 비교 명령을 돌린다.

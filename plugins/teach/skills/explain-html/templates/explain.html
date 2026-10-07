@@ -246,7 +246,7 @@ figure.fig figcaption { font-size: .82rem; color: var(--muted); margin-top: .5re
 .widget .cur { font-weight: 700; color: var(--fg-strong); min-width: 6rem; text-align: center; }
 .widget .say { margin: .8rem 0 0; font-size: .92rem; color: var(--muted); text-align: center; }
 
-/* textbook-html book.css·book.js 의 퀴즈와 동일 — 고치면 양쪽 */
+/* shared/quiz.css·quiz.js 의 사본 — 고치면 shared 와 textbook-html 사본도 맞춘다 */
 /* 퀴즈 */
 .quiz {
   margin: 1.5rem 0; padding: 1.1rem 1.25rem; border-radius: 12px;
@@ -396,7 +396,7 @@ figure.fig figcaption { font-size: .82rem; color: var(--muted); margin-top: .5re
           <span class="cur" id="w-cur"></span>
           <button type="button" id="w-next">다음</button>
         </div>
-        <p class="say" id="w-say"></p>
+        <p class="say" id="w-say" aria-live="polite"></p>
       </div>
 <script>
 (function () {
