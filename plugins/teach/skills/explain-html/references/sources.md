@@ -22,7 +22,7 @@ lock 파일은 "다루지 않음"으로 밝힌다. 탐색 범위가 넓으면 Ex
 
 | 상황 | 처리 |
 |---|---|
-| PR 인데 `gh auth status` 실패 | GitHub 원격이면 `git fetch origin pull/N/head` (로컬 브랜치를 만들지 않고 FETCH_HEAD 만)한 뒤 `git diff <base>...FETCH_HEAD` 로 diff 를 얻는다(원격 추적 정보만 갱신될 뿐 작업 트리·브랜치·파일은 바뀌지 않는다). 본문·토론은 "확인하지 못함"이라고 머리 메타에 밝힌다. 그것도 실패하면 멈추고 `! gh auth login` 을 안내한다 |
+| PR 인데 `gh auth status` 실패 | GitHub 원격이면 `git fetch origin pull/N/head` (로컬 브랜치를 만들지 않고 FETCH_HEAD 만)한 뒤 `git diff origin/<기본 브랜치>...FETCH_HEAD` 로 diff 를 얻는다(객체와 `FETCH_HEAD` 만 추가될 뿐 작업 트리·브랜치·파일은 바뀌지 않는다). 본문·토론은 "확인하지 못함"이라고 머리 메타에 밝힌다. 그것도 실패하면 멈추고 `! gh auth login` 을 안내한다 |
 | PR·이슈 URL | `gh pr view <url>` 은 저장소 밖에서도 된다. URL 을 우선 쓴다 |
 | 저장소 밖인데 SHA·브랜치 대상 | `git rev-parse --show-toplevel` 이 실패하면 저장소 경로를 한 번만 묻는다 |
 | 대상이 모호함("그 버그") | 한 번만 묻는다 |
