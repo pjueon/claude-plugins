@@ -30,6 +30,11 @@
       "name": "teach",
       "source": "./plugins/teach",
       "description": "Claude가 튜터가 되는 학습 도구 모음(hands-on 과외·textbook-html HTML 교재 집필·explain-html 단일 HTML 설명문). 학습 repo를 실습 코드가 딸린 책 한 권으로 키운다"
+    },
+    {
+      "name": "human-language",
+      "source": "./plugins/human-language",
+      "description": "기계적인 AI 문체를 벗겨내는 언어 지침 생성(language-guideline)·3-Pass 문체 검수(review-writing-style)·사용자 피드백 오답 노트 누적(record-language-feedback) 스킬"
     }
   ]
 }
