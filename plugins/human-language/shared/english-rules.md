@@ -6,7 +6,7 @@
 
 ## 1. AI 과대표집 어휘 (Banned Words) 정화
 
-다음과 같은 RLHF 과대표집 어휘는 기계적인 느낌을 주므로 일상적이고 구체적인 단어로 대체합니다:
+다음과 같은 RLHF 과대표집 어휘는 기계적인 느낌을 주므로 일상적이고 구체적인 단어로 대체합니다. 단어 자체는 정상 어휘이므로, 한 문단에 여러 개가 몰려 있거나 구체적 내용 없이 수식으로만 쓰일 때 교정하고 하나만 자연스럽게 쓰인 경우는 그대로 둡니다:
 * **지양 어휘**: *delve, tapestry, pivotal, underscore, testament, landscape, holistic, vibrant, beacon, foster, nuanced, paramount, comprehensive, seamless, revolutionize, realm*
 * **교정 방향**:
   - `delve into` ➔ `examine`, `look at`, `explore`
@@ -21,7 +21,7 @@
 * **Parallel Negation 해체**:
   - `It is not just about X, but also about Y` ➔ 직결: `It covers both X and Y.` 또는 Y만 진술.
 * **Tricolon (Rule of Threes) 해체**:
-  - 형용사나 불릿 항목 3개를 기계적으로 병렬 배치하는 패턴을 깨고, 1~2개로 압축하거나 사실 중심 단문으로 분리.
+  - 형용사나 불릿 항목 3개를 기계적으로 병렬 배치하는 패턴을 깨십시오. 내용상 실제로 셋이면 그대로 쓰고, 개수를 채우려 덧붙인 항목만 걷어내거나 사실 중심 단문으로 분리.
 * **Rhetorical Q&A 금지**:
   - `Why does this matter? Because...` ➔ 자문자답을 지양하고 본론부터 직접 서술.
 * **Em Dash(`—`) 남발 제한**:
