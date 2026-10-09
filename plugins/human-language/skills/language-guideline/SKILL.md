@@ -1,8 +1,7 @@
 ---
 name: language-guideline
 description: 프로젝트, 특정 파일(CLAUDE.md 등), 또는 특정 스킬에 맞는 맞춤형 언어/문체 지침을 동적으로 생성하고 주입합니다. 사용자가 "CLAUDE.md에 한국어 지침 추가해줘", "자연스러운 한국어 규칙 만들어줘", "이 스킬을 위한 언어 가이드라인 작성해줘"라고 요청할 때 호출됩니다.
-tools: Read, Grep, Glob, Edit, Write
-model: inherit
+allowed-tools: Read, Grep, Glob, Edit, Write
 ---
 
 # language-guideline 스킬

@@ -1,8 +1,7 @@
 ---
 name: record-language-feedback
 description: 사용자가 지적한 표현 교정 패턴이나 언어 규칙 피드백을 오답 노트에 기록하고 중복을 방지합니다. 사용자가 "앞으로 A 대신 B 써", "C 표현 쓰지 마", "여기 X를 Y로 바꿔"라고 피드백할 때 호출됩니다.
-tools: Read, Grep, Glob, Edit, Write
-model: inherit
+allowed-tools: Read, Grep, Glob, Edit, Write
 ---
 
 # record-language-feedback 스킬

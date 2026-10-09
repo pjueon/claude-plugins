@@ -1,8 +1,7 @@
 ---
 name: review-writing-style
 description: 텍스트, 문서, 또는 초안의 표현을 검수하고 탈-AI 문체로 교정합니다. "이 글 표현 검수해줘", "어색한 말투 고쳐줘", "번역투 빼줘", "문장 다듬어줘"라고 요청할 때 호출됩니다.
-tools: Read, Grep, Glob
-model: inherit
+allowed-tools: Read, Grep, Glob
 ---
 
 # review-writing-style 스킬
