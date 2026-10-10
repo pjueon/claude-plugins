@@ -35,6 +35,11 @@
       "name": "human-language",
       "source": "./plugins/human-language",
       "description": "기계적인 AI 문체를 벗겨내는 언어 지침 생성(language-guideline)·3-Pass 문체 검수(review-writing-style)·사용자 피드백 오답 노트 누적(record-language-feedback) 스킬"
+    },
+    {
+      "name": "model-band",
+      "source": "./plugins/model-band",
+      "description": "프롬프트 바로 위 band에 현재 모델과 컨텍스트 사용률(80% 이상 경고 색)을 항상 표시하는 mod"
     }
   ]
 }
