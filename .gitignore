@@ -193,3 +193,6 @@ pyrightconfig.json
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
+
+# Claude Code mod 로드 시 엔진이 생성하는 타입 파일
+plugins/*/.claude-plugin/types/
