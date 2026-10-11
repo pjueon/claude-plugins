@@ -45,6 +45,7 @@ pre.diff .add, pre.diff .del, pre.diff .hunk { display: inline-block; min-width:
 pre.diff .add { background: var(--good-bg); }
 pre.diff .del { background: var(--bad-bg); }
 pre.diff .hunk { color: var(--muted); }
+pre.diff .hunk span { color: inherit; font: inherit; }
 
 /* 위젯 */
 .widget { margin: 1.5rem 0; padding: 1rem 1.15rem; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); }
@@ -172,6 +173,7 @@ pre.diff .hunk { color: var(--muted); }
       <h2>▣ 코드 훑기 / 원인 추적과 수정 / 동작 따라가기</h2>
 
       <h3>▣ 묶음 1</h3>
+      <!-- ▣ 코드 <pre> 는 Python 으로 색칠된다. 명령 출력·로그·트레이스는 <code class="plain"> 로 둔다 -->
 <pre><span class="cap"># ▣ 파일 경로</span><code>def example(x):
     return <b class="hl">x + 1</b>
 </code></pre>
@@ -328,6 +330,58 @@ pre.diff .hunk { color: var(--muted); }
     targets.forEach(function (t) { io.observe(t); });
   }
 
+  /* 코드 하이라이터 — shared/highlight.js 정본의 사본(고치면 양쪽). 기본은 Python 이다.
+     다른 언어의 코드를 실으면 아래 PY_KW(주석·문자열 표기가 다르면 PY_RE 의 첫 두 그룹도)를 그 언어에 맞게 바꾼다.
+     명령 출력·로그·JSON 처럼 코드가 아닌 pre 는 <code class="plain"> 로 색칠에서 뺀다. */
+  var PY_KW = 'False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|' +
+              'else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|' +
+              'pass|raise|return|try|while|with|yield|match|case';
+
+  var PY_RE = new RegExp(
+    '(#[^\\n]*)' +
+    '|([fFrRbBuU]{0,2}(?:"""[\\s\\S]*?"""|\'\'\'[\\s\\S]*?\'\'\'|"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'))' +
+    '|(@[A-Za-z_][\\w.]*)' +
+    '|\\b(def|class)(\\s+)([A-Za-z_]\\w*)' +
+    '|\\b(self|cls)\\b' +
+    '|\\b(' + PY_KW + ')\\b' +
+    '|\\b(\\d[\\d_]*(?:\\.\\d+)?)\\b',
+    'g');
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlightPython(src) {
+    return esc(src).replace(PY_RE, function (m, com, str, dec, defkw, gap, name, slf, kw, num) {
+      if (com) return '<span class="tok-com">' + com + '</span>';
+      if (str) return '<span class="tok-str">' + str + '</span>';
+      if (dec) return '<span class="tok-dec">' + dec + '</span>';
+      if (defkw) return '<span class="tok-kw">' + defkw + '</span>' + gap + '<span class="tok-fn">' + name + '</span>';
+      if (slf) return '<span class="tok-self">' + slf + '</span>';
+      if (kw) return '<span class="tok-kw">' + kw + '</span>';
+      if (num) return '<span class="tok-num">' + num + '</span>';
+      return m;
+    });
+  }
+
+  /* code 안의 텍스트 노드만 색칠한다. 저자가 직접 넣은 <b class="hl"> 같은
+     강조 표시를 지우지 않기 위한 방식. */
+  function highlightAll(root) {
+    var blocks = root.querySelectorAll('pre > code, pre code.python');
+    Array.prototype.forEach.call(blocks, function (code) {
+      if (code.dataset.hl === 'done' || code.classList.contains('plain')) return;
+      var texts = [];
+      var walker = document.createTreeWalker(code, NodeFilter.SHOW_TEXT, null, false);
+      while (walker.nextNode()) texts.push(walker.currentNode);
+      texts.forEach(function (t) {
+        var span = document.createElement('span');
+        span.innerHTML = highlightPython(t.nodeValue);
+        t.parentNode.replaceChild(span, t);
+      });
+      code.dataset.hl = 'done';
+    });
+  }
+
   /* diff 색칠: 첫 글자가 + - @ 인 줄 */
   function markDiff() {
     Array.prototype.forEach.call(document.querySelectorAll('pre.diff > code'), function (code) {
@@ -392,6 +446,7 @@ pre.diff .hunk { color: var(--muted); }
   document.addEventListener('DOMContentLoaded', function () {
     buildToc();
     markDiff();
+    highlightAll(document.getElementById('doc'));
     initQuiz(document);
   });
 })();

@@ -71,6 +71,7 @@ window.addEventListener('load', function () {
   var mm = mathCheck(document.getElementById('doc'));
   r.push('katexError=' + mm.katexError, 'rawMath=' + mm.rawMath);
   r.push('mathMarkers=' + (document.documentElement.outerHTML.match(new RegExp('<!-' + '- teach:', 'g')) || []).length);
+  r.push('hlPending=' + document.querySelectorAll('pre > code:not(.plain):not([data-hl="done"])').length);   // 색칠되지 않은 코드 블록
   var kf = 0; document.fonts.forEach(function (f) { if (/KaTeX/.test(f.family) && f.status === 'loaded') kf++; });
   r.push('katexFonts=' + kf);
   var hide = document.createElement('style'); hide.textContent = '.katex-mathml{display:none}'; document.head.appendChild(hide);
@@ -92,7 +93,7 @@ C="/c/Program Files/Google/Chrome/Application/chrome.exe"
 
 | 조합 | 추가 플래그 | 기대 |
 |---|---|---|
-| 데스크톱·라이트 | `--window-size=1280,1000 --blink-settings=preferredColorScheme=1` (시스템 설정을 따르므로 기본값이 다크일 수 있다. 실제로 적용됐는지는 `scheme=` 출력이 알려 준다) | `pageOverflow=0 quizBad=0 errors=0 placeholders=0 katexError=0 rawMath=0 mathMarkers=0` (수식이 있으면 `katexFonts` 가 0 보다 큼) |
+| 데스크톱·라이트 | `--window-size=1280,1000 --blink-settings=preferredColorScheme=1` (시스템 설정을 따르므로 기본값이 다크일 수 있다. 실제로 적용됐는지는 `scheme=` 출력이 알려 준다) | `pageOverflow=0 quizBad=0 errors=0 placeholders=0 katexError=0 rawMath=0 mathMarkers=0 hlPending=0` (수식이 있으면 `katexFonts` 가 0 보다 큼) |
 | 데스크톱·다크 | `--force-dark-mode` | 위와 같음. `scheme=dark` 가 나와야 실제로 다크로 본 것이다 |
 | 모바일 | headless 는 창 폭을 500 이상으로 올릴 수 있으므로, **390px 폭 `iframe` 을 담은 래퍼 페이지**에서 `contentDocument.documentElement.scrollWidth - clientWidth` 를 잰다(`--allow-file-access-from-files` 필요) | `pageOverflow=0` (`pre` 는 상자 안 스크롤이라 넘침 허용) |
 
@@ -102,7 +103,7 @@ C="/c/Program Files/Google/Chrome/Application/chrome.exe"
 
 그 밖의 기대값: `sections=background,intuition,detail,quiz`, `quiz=5`, `answers` 에 한 번호가
 몰려 있지 않음(예: `21342`), `chars` 가 대략 12,000자 이하(넘으면 줄이거나 textbook-html 을 제안).
-스크린샷(`--screenshot=<scratchpad>/shot-….png`)을 찍어 Read 로 보고 목차·퀴즈·콜아웃·diff 색·
+스크린샷(`--screenshot=<scratchpad>/shot-….png`)을 찍어 Read 로 보고 목차·퀴즈·콜아웃·코드 색·diff 색·
 위젯이 두 테마와 모바일 폭에서 읽히는지 눈으로 확인한다.
 
 정적 점검 — **인라인 전 원고**에 돌린다(인라인한 KaTeX·글꼴 데이터에는 `fetch(`·`url(` 이 들어 있어 걸린다):
@@ -124,6 +125,6 @@ grep -nP '[\x{2500}-\x{257F}]|\+-{3,}\+' draft.html                             
 - 근거를 얻지 못한 부분이 머리 메타나 본문에 "확인하지 못함"으로 적혀 있는가.
 - 수식의 기호·부호·첨자가 근거 메모의 식과 같은가(`katexError=0` 은 식의 내용이 맞다는 뜻이 아니다). 제목·`data-why` 에 수식을 쓰지 않았는가(`../../../shared/math.md`).
 
-## 3. 퀴즈 마크업 계약 비교 (템플릿 또는 textbook-html 런타임을 고쳤을 때)
+## 3. 퀴즈·하이라이터 정본 비교 (템플릿 또는 textbook-html 런타임을 고쳤을 때)
 
-`../../../shared/quiz.md` 의 "정본과 사본" 비교 명령을 돌린다.
+`../../../shared/quiz.md` 와 `../../../shared/highlight.md` 의 "정본과 사본" 비교 명령을 돌린다.

@@ -40,7 +40,7 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Skill, Agent
   - **상세**: 변경이면 코드를 이해하기 좋은 순서로 묶어 훑고, 버그면 원인을 추적하고,
     개념이면 동작을 단계별로 따라간다.
 - **E4 그림은 HTML·SVG 로.** ASCII 도식을 쓰지 않는다. 도식 계열은 1~3개만 정해 재사용하고
-  도식에는 예시 데이터를 넣는다. 도식·위젯에 필요한 CSS 클래스는 템플릿 `<style>` 끝에 추가해도 된다(색은 변수로). 코드는 반드시 `<pre>` 에 넣는다. 값을 움직여 보일 것이
+  도식에는 예시 데이터를 넣는다. 도식·위젯에 필요한 CSS 클래스는 템플릿 `<style>` 끝에 추가해도 된다(색은 변수로). 코드는 반드시 `<pre>` 에 넣는다. `<pre>` 안 코드는 Python 기준으로 자동 색칠되며, 코드가 아닌 출력·로그는 `<code class="plain">` 로 뺀다(언어 교체 등은 `../../shared/highlight.md`). 값을 움직여 보일 것이
   있으면 위젯을 만든다 — 지침은 `../../shared/visuals.md` 를 따른다.
   핵심 개념·정의·엣지 케이스는 콜아웃(`.box`)으로 눈에 띄게 한다.
 - **E5 문체.** `../../shared/writing-style.md` 를 따른다
@@ -98,10 +98,10 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Skill, Agent
 
 | 파일 | 무엇 |
 |---|---|
-| `templates/explain.html` | 자체 완결 골격 — 목차·접는 배경·콜아웃·diff 줄 색·퀴즈·단계 위젯 예시 |
+| `templates/explain.html` | 자체 완결 골격 — 목차·접는 배경·콜아웃·코드 하이라이팅·diff 줄 색·퀴즈·단계 위젯 예시 |
 | `references/sources.md` | 대상 종류별 근거 수집 방법, 실패 처리, 상세 절 구성 |
 | `references/checklist.md` | 저장 전 점검 — probe 스크립트, 내용 점검 |
-| `../../shared/` | teach 스킬 공통 기준·자산 — `writing-style.md`(문체), `visuals.md`(그림·위젯), `quiz.md`(퀴즈 계약), `math.md`(수식 규칙·점검), `base.css`·`katex/`·`math.js`·`math.css`(공통 스타일·수식, `inline-shared.js` 가 인라인) |
+| `../../shared/` | teach 스킬 공통 기준·자산 — `writing-style.md`(문체), `visuals.md`(그림·위젯), `quiz.md`(퀴즈 계약), `math.md`(수식 규칙·점검), `highlight.md`(코드 하이라이팅 계약, `highlight.js` 정본은 템플릿에 사본), `base.css`·`katex/`·`math.js`·`math.css`(공통 스타일·수식, `inline-shared.js` 가 인라인) |
 
 ## 비목표
 
