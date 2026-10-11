@@ -1,5 +1,5 @@
 /* 공통 부품 스타일 — textbook-html 과 explain-html 이 함께 쓰는 정본
-   - 색 팔레트(:root)·본문 글꼴·제목·콜아웃(.box)·접는 상자·코드·표·그림 스타일
+   - 색 팔레트(:root)·본문 글꼴·제목·콜아웃(.box)·접는 상자·코드(토큰 색 포함)·표·그림 스타일
    - 외부 폰트/CDN 의존 없음 (file:// 로 열려야 한다), 라이트/다크 자동 전환
    - textbook-html: docs/assets/base.css 로 복사해 book.css 보다 먼저 불러온다
    - explain-html: shared/inline-shared.js 가 원고의 teach:base-style 마커 주석 자리에 인라인한다
@@ -25,6 +25,13 @@
   --code-bg: #f5f2ec;
   --code-fg: #2b2721;
   --hl-bg: rgba(168,87,27,.16);
+  --c-kw: #9c2f6f;
+  --c-str: #2f6f4a;
+  --c-com: #746c60;
+  --c-num: #a8571b;
+  --c-fn: #2f5d8a;
+  --c-dec: #7a5aa8;
+  --c-self: #a33a33;
   --measure: 45rem;
 }
 
@@ -49,6 +56,13 @@
     --code-bg: #191b1e;
     --code-fg: #d8d5cf;
     --hl-bg: rgba(221,161,94,.20);
+    --c-kw: #e089b8;
+    --c-str: #8fcfa5;
+    --c-com: #918d84;
+    --c-num: #dda15e;
+    --c-fn: #8fbce8;
+    --c-dec: #bfa2e8;
+    --c-self: #e08b84;
   }
 }
 
@@ -158,6 +172,13 @@ pre .cap {
   font-size: .95em; margin-bottom: .5rem;
 }
 .hl { background: var(--hl-bg); border-radius: 3px; padding: .05em .2em; font-weight: 700; }
+.tok-kw { color: var(--c-kw); }
+.tok-str { color: var(--c-str); }
+.tok-com { color: var(--c-com); font-style: italic; }
+.tok-num { color: var(--c-num); }
+.tok-fn { color: var(--c-fn); font-weight: 600; }
+.tok-dec { color: var(--c-dec); }
+.tok-self { color: var(--c-self); }
 
 /* 코드 해설: 번호 붙은 주석 목록 */
 ol.notes {

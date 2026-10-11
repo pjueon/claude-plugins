@@ -4,17 +4,9 @@
    - 교재마다 고칠 것이 없다 */
 
 /* 팔레트와 공통 부품 스타일은 base.css(공유 정본)가 맡는다. 아래는 교재 런타임 전용 변수다.
-   색을 바꾸려면 base.css 의 :root 변수와 아래 변수를 함께 만진다. */
+   색을 바꾸려면 base.css 의 :root 변수와 아래 변수를 함께 만진다. 코드 토큰 색(--c-*)도 base.css 에 있다. */
 :root {
   --shadow: 0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.05);
-
-  --c-kw: #9c2f6f;
-  --c-str: #2f6f4a;
-  --c-com: #746c60;
-  --c-num: #a8571b;
-  --c-fn: #2f5d8a;
-  --c-dec: #7a5aa8;
-  --c-self: #a33a33;
 
   --sidebar: 17rem;
 }
@@ -22,14 +14,6 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.3);
-
-    --c-kw: #e089b8;
-    --c-str: #8fcfa5;
-    --c-com: #918d84;
-    --c-num: #dda15e;
-    --c-fn: #8fbce8;
-    --c-dec: #bfa2e8;
-    --c-self: #e08b84;
   }
 }
 
@@ -125,14 +109,6 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   border-radius: 999px; padding: .1rem .6rem; white-space: nowrap;
 }
 details.fold.answer > summary { color: var(--good); }
-.tok-kw { color: var(--c-kw); }
-.tok-str { color: var(--c-str); }
-.tok-com { color: var(--c-com); font-style: italic; }
-.tok-num { color: var(--c-num); }
-.tok-fn { color: var(--c-fn); font-weight: 600; }
-.tok-dec { color: var(--c-dec); }
-.tok-self { color: var(--c-self); }
-
 figure.code-cap { margin: 1.3rem 0; }
 figure.code-cap pre { margin: 0 0 .4rem; }
 figure.code-cap figcaption { font-size: .82rem; color: var(--muted); text-align: left; }

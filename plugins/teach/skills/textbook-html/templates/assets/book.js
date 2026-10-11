@@ -52,7 +52,8 @@
         기본은 Python. 다른 언어면 이 목록만 교체한다.
         한 교재에 언어가 둘이면 합집합으로 둔다 — 오탐이 조금 늘지만 충분하다.
         주석·문자열 표기 자체가 다른 언어(슬래시 두 개로 주석을 여는 계열 등)는
-        아래 PY_RE 의 첫 두 그룹도 함께 고쳐야 한다. */
+        아래 PY_RE 의 첫 두 그룹도 함께 고쳐야 한다.
+        PY_KW 부터 highlightAll 까지는 shared/highlight.js 정본의 사본이다(고치면 양쪽). */
   var PY_KW = 'False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|' +
               'else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|' +
               'pass|raise|return|try|while|with|yield|match|case';

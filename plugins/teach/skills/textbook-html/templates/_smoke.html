@@ -109,6 +109,7 @@ window.addEventListener('load', function () {
   ok('화살표 보존', code.textContent.indexOf('-> None') > -1);
   ok('주석 안 문자열이 주석으로', code.querySelector('.tok-com').textContent.indexOf('가짜문자열') > -1);
   ok('cap은 색칠 대상 아님', document.querySelector('pre > .cap').querySelectorAll('span').length === 0);
+  ok('토큰 색 스타일 적용(base.css)', getComputedStyle(code.querySelector('.tok-kw')).color !== getComputedStyle(code).color);
 
   // 용어 툴팁
   var term = document.querySelector('.term');

@@ -31,7 +31,7 @@ docs/                   독자에게 나가는 산출물만 둔다 (GitHub Pages
   index.html            표지 + 목차 + 학습 트랙
   ch00.html … chNN.html
   glossary.html         (선택) 용어집 부록
-  assets/base.css       동봉본(shared 에서 복사). 공통 부품 스타일·색 팔레트(`:root` 변수)
+  assets/base.css       동봉본(shared 에서 복사). 공통 부품 스타일·색 팔레트(`:root` 변수)·코드 토큰 색
   assets/book.css       동봉본. 교재 런타임 전용 스타일. 손대지 않는다
   assets/book.js        동봉본. [교재별] 다섯 블록만 고친다
   assets/math.js        동봉본(shared 에서 복사). 수식(KaTeX) 렌더 호출. 손대지 않는다
@@ -44,7 +44,7 @@ authoring/              집필에 필요한 저자용 문서. 독자에게 나�
   01-커리큘럼.md        장별 항목 · 페이지 수 · 시간 (집필 전)
   02-코드-정본.md       (코드가 장을 넘어 누적되거나 `code/`·`solutions/` 를 동봉하는 교재는 필수) 시그니처 고정
   03-진행-장부.md       장 사이 약속·용어 정의 기록 (집필 에이전트 간 인계)
-  _smoke.html           런타임 점검 54 단정 (../docs/assets 를 참조)
+  _smoke.html           런타임 점검 55 단정 (../docs/assets 를 참조)
 
 code/                   (실습 코드를 동봉하는 교재) 학습자가 작성하는 코드. 장을 거치며 누적된다
 solutions/chNN/         (같은 경우) 그 장 완료 시점의 모범 상태 스냅샷
@@ -188,7 +188,7 @@ hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/
 
 - 렌더는 `math.js` 가 `<main id="book">` 안에서 한 번 한다. 스크립트는 반드시 `book.js` 앞에 둔다.
 - 수식이 없는 교재는 `ch-template.html` 의 katex·math 줄(`<link>` 둘, `<script>` 셋)을 빼도 된다.
-- `base.css`·`math.css`·`katex/` 는 `shared/` 의 정본에서 골격 세우기 때 복사한 사본이다. 이미 만든 교재에서 `book.css` 만 새 버전으로 바꾸면 공통 부품 스타일이 빠지므로, `base.css`·`math.css` 도 함께 복사하고 각 HTML 에 `<link>` 를 추가한다.
+- `base.css`·`math.css`·`katex/` 는 `shared/` 의 정본에서 골격 세우기 때 복사한 사본이다. 이미 만든 교재에서 `book.css` 만 새 버전으로 바꾸면 공통 부품 스타일(코드 토큰 색 포함)이 빠지므로, `base.css`·`math.css` 도 함께 복사하고 각 HTML 에 `<link>` 를 추가한다.
 
 ## 동봉 파일
 
@@ -199,13 +199,13 @@ hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/
 | `templates/assets/book.js` | 런타임 — 목차·페이지 넘김·진행률·퀴즈 채점·탭·툴팁·페이지 참조 링크(이동·돌아가기)·하이라이터·진도 |
 | `templates/ch-template.html` | **페이지 서식의 진실 원천.** 쓸 수 있는 부품 전부 + 위젯 예시 |
 | `templates/index.html` | 표지·학습 트랙·목차 |
-| `templates/_smoke.html` | 런타임 점검 54 단정 |
+| `templates/_smoke.html` | 런타임 점검 55 단정 |
 | `references/plan-and-curriculum.md` | 기획서·커리큘럼 서식과 배분 기준 |
 | `references/authoring.md` | 장 집필 순서, 점검 명령, 자주 틀리는 것 (집필·리뷰 에이전트용) |
 | `references/orchestration.md` | 오케스트레이터 루프, 진행 장부, 병렬화 조건, 기존 장 문체 교정 패스 |
 | `../../agents/` | `textbook-writer`, `textbook-reviewer` 서브에이전트 정의 |
 
-퀴즈 마크업은 explain-html 과 동일 계약이다(`../../shared/quiz.md`). `book.js`·`book.css` 의 퀴즈 부분은 `../../shared/quiz.js`·`quiz.css` 정본의 사본이다. 정본이나 사본을 바꾸면 그 문서의 비교 명령을 돌린다. 문체(`../../shared/writing-style.md`)·시각화(`../../shared/visuals.md`)·수식(`../../shared/math.md`)도 공통 기준이다.
+퀴즈 마크업은 explain-html 과 동일 계약이다(`../../shared/quiz.md`). `book.js`·`book.css` 의 퀴즈 부분은 `../../shared/quiz.js`·`quiz.css` 정본의 사본이다. 코드 하이라이터도 `book.js` 의 `PY_KW` 부터 `highlightAll` 까지가 `../../shared/highlight.js` 정본의 사본이고, 토큰 색은 `base.css` 에 있다(`../../shared/highlight.md`). 정본이나 사본을 바꾸면 그 문서의 비교 명령을 돌린다. 문체(`../../shared/writing-style.md`)·시각화(`../../shared/visuals.md`)·수식(`../../shared/math.md`)도 공통 기준이다.
 
 ## 비목표
 

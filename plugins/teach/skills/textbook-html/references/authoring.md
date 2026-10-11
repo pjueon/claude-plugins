@@ -20,9 +20,9 @@
 
 ### 1) 런타임 점검 — `_smoke.html`
 
-54개 단정(사이드바, 페이지 이동, 카운터·진행률·주소 `#sN`, 하이라이터 토큰, 부등호 보존, 탭, 수식 렌더(KaTeX),
+55개 단정(사이드바, 페이지 이동, 카운터·진행률·주소 `#sN`, 하이라이터 토큰·토큰 색, 부등호 보존, 탭, 수식 렌더(KaTeX),
 퀴즈 채점·키보드 조작, 용어 툴팁 `#tip`, 페이지 참조 링크·돌아가기).
-**`book.css` · `book.js` 를 고칠 때마다 돌린다.**
+**`book.css` · `book.js` · `base.css` 를 고칠 때마다 돌린다.**
 
 ```bash
 chrome --headless=new --disable-gpu --no-sandbox --virtual-time-budget=4000 \
