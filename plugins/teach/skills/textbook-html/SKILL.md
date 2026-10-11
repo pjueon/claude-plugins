@@ -31,10 +31,12 @@ docs/                   독자에게 나가는 산출물만 둔다 (GitHub Pages
   index.html            표지 + 목차 + 학습 트랙
   ch00.html … chNN.html
   glossary.html         (선택) 용어집 부록
-  assets/book.css       동봉본. 손대지 않는다
+  assets/base.css       동봉본(shared 에서 복사). 공통 부품 스타일·색 팔레트(`:root` 변수)
+  assets/book.css       동봉본. 교재 런타임 전용 스타일. 손대지 않는다
   assets/book.js        동봉본. [교재별] 다섯 블록만 고친다
-  assets/math.js        동봉본. 수식(KaTeX) 렌더 호출. 손대지 않는다
-  assets/katex/         동봉본. KaTeX 로컬 사본(CSS·JS·woff2 글꼴). 손대지 않는다
+  assets/math.js        동봉본(shared 에서 복사). 수식(KaTeX) 렌더 호출. 손대지 않는다
+  assets/math.css       동봉본(shared 에서 복사). 수식 보정 스타일. 손대지 않는다
+  assets/katex/         동봉본(shared 에서 복사). KaTeX 로컬 사본(CSS·JS·woff2 글꼴·라이선스). 손대지 않는다
   .nojekyll             빈 파일. GitHub Pages 가 Jekyll 처리를 건너뛰게 한다
 
 authoring/              집필에 필요한 저자용 문서. 독자에게 나가지 않는다
@@ -135,6 +137,8 @@ solutions/chNN/         (같은 경우) 그 장 완료 시점의 모범 상태 �
 ```bash
 mkdir -p docs authoring
 cp -r <skill>/templates/assets       docs/assets
+cp    <skill>/../../shared/base.css <skill>/../../shared/math.css <skill>/../../shared/math.js docs/assets/
+cp -r <skill>/../../shared/katex     docs/assets/katex
 touch docs/.nojekyll
 cp    <skill>/templates/_smoke.html  authoring/_smoke.html
 cp    <skill>/templates/index.html   docs/index.html       # ▣ 주석 자리를 채운다
@@ -179,28 +183,19 @@ hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/
 
 ## 수식
 
-수식은 유니코드(`x⁽¹⁾`, `‖a‖`)를 `<code>` 에 넣지 말고 **LaTeX 로 쓴다.** 고정폭 글꼴로 나와
-첨자가 어긋나고 분수·제곱근·Σ 한계 표기가 안 되기 때문이다.
+수식은 LaTeX 로 쓰고 KaTeX 가 그린다. 작성 규칙(문장 속 `\( \)`, 별행 `\[ \]`, 제목·속성값 금지, 연산 기호 구분, 점검)은
+두 스킬 공통 기준인 `../../shared/math.md` 를 따른다. textbook-html 에만 해당하는 것은 아래와 같다.
 
-- 문장 속은 `\( … \)`, 별행은 `<p style="text-align:center">\[ … \]</p>`.
-- 코드 식별자·함수명(`SVC`, `np.dot`)은 수식이 아니라 `<code>` 로 둔다. `<pre>` 안은 렌더하지 않는다.
-- HTML 안이므로 부등호는 `&lt;` 로 쓴다(`>` 는 그대로 가능).
-- 노름은 `\lVert a\rVert`, 한글은 `\text{모든}` 으로 감싼다.
-- 연산 기호는 **의미마다 다른 기호를 쓰고, 처음 쓰는 페이지에서 먼저 설명한다.** 같은 기호를 두 가지 뜻으로 쓰지 않는다.
-  - 대상: 내적, 스칼라 곱, 숫자 곱, 원소별 곱, 외적, 합성곱 등 교재에 나오는 연산. 필요한 것만 다룬다.
-  - 어떤 기호를 쓸지는 교재의 분야와 독자 관례에 맞춘다. 내적만 해도 `w\cdot x`, `w^{T}x`, `\langle x, y\rangle`, `\langle a|b\rangle` 처럼 다양하다. 하나를 골라 교재 전체에서 통일하고, 다른 책의 표기가 있으면 "다른 책의 표기" 상자로 짚는다.
-  - 예시(내적을 `\cdot` 로 정한 경우): 스칼라 곱은 기호 생략(`tw`), 숫자 곱은 `\times`(생략하면 34 로 읽힌다), 원소별 곱은 `\odot`, 합성곱은 `*`.
-  - 본문 텍스트·표의 `3·4` 도 같은 규칙을 따른다. 집필 후 `grep` 으로 같은 기호가 두 뜻으로 쓰인 곳이 없는지 훑는다.
 - 렌더는 `math.js` 가 `<main id="book">` 안에서 한 번 한다. 스크립트는 반드시 `book.js` 앞에 둔다.
-- 수식이 없는 교재는 `ch-template.html` 의 katex·math 줄을 빼도 된다.
-- 위젯이 JS 로 만들어 내는 수식은 렌더되지 않는다(위젯 값은 숫자 위주로 쓰거나 `<code>`).
+- 수식이 없는 교재는 `ch-template.html` 의 katex·math 줄(`<link>` 둘, `<script>` 셋)을 빼도 된다.
+- `base.css`·`math.css`·`katex/` 는 `shared/` 의 정본에서 골격 세우기 때 복사한 사본이다. 이미 만든 교재에서 `book.css` 만 새 버전으로 바꾸면 공통 부품 스타일이 빠지므로, `base.css`·`math.css` 도 함께 복사하고 각 HTML 에 `<link>` 를 추가한다.
 
 ## 동봉 파일
 
 | 파일 | 무엇 |
 |---|---|
-| `templates/assets/book.css` | 공통 스타일(라이트/다크). 색만 `:root` 변수로 조정 |
-| `templates/assets/katex/`, `math.js` | 수식 렌더링(KaTeX 로컬 사본 + 호출 스크립트). 오프라인 `file://` 로 동작 |
+| `templates/assets/book.css` | 교재 런타임 전용 스타일(라이트/다크). 공통 부품·팔레트는 `../../shared/base.css` |
+| `../../shared/katex/`, `math.js`, `math.css`, `base.css` | 골격 세우기 때 `docs/assets/` 로 복사하는 공유 자산(수식 렌더링·공통 스타일). 오프라인 `file://` 로 동작 |
 | `templates/assets/book.js` | 런타임 — 목차·페이지 넘김·진행률·퀴즈 채점·탭·툴팁·페이지 참조 링크(이동·돌아가기)·하이라이터·진도 |
 | `templates/ch-template.html` | **페이지 서식의 진실 원천.** 쓸 수 있는 부품 전부 + 위젯 예시 |
 | `templates/index.html` | 표지·학습 트랙·목차 |
@@ -210,7 +205,7 @@ hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/
 | `references/orchestration.md` | 오케스트레이터 루프, 진행 장부, 병렬화 조건, 기존 장 문체 교정 패스 |
 | `../../agents/` | `textbook-writer`, `textbook-reviewer` 서브에이전트 정의 |
 
-퀴즈 마크업은 explain-html 과 동일 계약이다(`../../shared/quiz.md`). `book.js`·`book.css` 의 퀴즈 부분은 `../../shared/quiz.js`·`quiz.css` 정본의 사본이다. 정본이나 사본을 바꾸면 그 문서의 비교 명령을 돌린다. 문체(`../../shared/writing-style.md`)와 시각화(`../../shared/visuals.md`)도 공통 기준이다.
+퀴즈 마크업은 explain-html 과 동일 계약이다(`../../shared/quiz.md`). `book.js`·`book.css` 의 퀴즈 부분은 `../../shared/quiz.js`·`quiz.css` 정본의 사본이다. 정본이나 사본을 바꾸면 그 문서의 비교 명령을 돌린다. 문체(`../../shared/writing-style.md`)·시각화(`../../shared/visuals.md`)·수식(`../../shared/math.md`)도 공통 기준이다.
 
 ## 비목표
 

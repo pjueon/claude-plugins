@@ -107,7 +107,7 @@ git author 는 모두 사용자다. Co-Authored-By 를 넣지 않는다. 한국�
 - `teach 연동: <N>장 답안공개, 학습자 구현 <sha>..<sha>`
 
 기획·커리큘럼은 상담에서 이미 만들었으므로 textbook-html 은 다시 묻지 않고 **지시된 장만** 처리하고
-멈춘다. 골격 세우기(assets·`_smoke.html`·`index.html` 복사, `book.js` 교재별 블록)는 상담이 한다(`references/consultation.md` §4). 원본은 이 스킬의 기본 디렉터리(Base directory) 기준 `../textbook-html/templates/` 다.
+멈춘다. 골격 세우기(assets·`_smoke.html`·`index.html` 복사, `book.js` 교재별 블록)는 상담이 한다(`references/consultation.md` §4). 원본은 이 스킬의 기본 디렉터리(Base directory) 기준 `../textbook-html/templates/` 이고, 수식·공통 스타일 자산(`base.css`·`math.css`·`math.js`·`katex/`)은 `../../shared/` 에 있다(textbook-html SKILL.md 절차 3 의 `cp` 명령).
 
 후공개 장의 과제 모범답안 자리(`details.fold answer` 의 `fold-body`)에는 아래만 들어간다. summary 는 그대로 둔다.
 

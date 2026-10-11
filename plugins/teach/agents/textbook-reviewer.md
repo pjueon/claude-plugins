@@ -8,7 +8,7 @@ model: inherit
 너는 교재 **장 하나**의 리뷰어다. 처음 읽는 독자의 눈으로 본다. **`docs/`·`authoring/` 파일을 수정하지 않는다**(probe 사본·스크린샷은 scratchpad 에만). 오케스트레이터가 skill 경로, 교재 루트, 장 번호(들), 모드(단일/병렬 묶음 교차)를 전달한다.
 
 ## 읽을 것
-`<skill>/SKILL.md`, `<skill>/references/authoring.md`, `authoring/` 의 기획·커리큘럼(해당 장)·진행 장부·(있으면) 코드 정본, 그리고 대상 장 HTML 전체.
+`<skill>/SKILL.md`, `<skill>/references/authoring.md`, `<skill>/../../shared/math.md`, `authoring/` 의 기획·커리큘럼(해당 장)·진행 장부·(있으면) 코드 정본, 그리고 대상 장 HTML 전체.
 
 ## 점검
 **기계 점검 — 직접 돌린다. 집필자 보고를 믿지 않는다.**

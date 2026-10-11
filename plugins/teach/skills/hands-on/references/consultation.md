@@ -78,7 +78,7 @@
 4. 교재를 쓰면 textbook-html 의 절차 3(골격 세우기)을 **전부** 한다 — assets·`_smoke.html`·`index.html`
    복사, `docs/.nojekyll`, `book.js` 의 `[교재별 1/5]`~`[교재별 5/5]` 블록(제목, `STORE_KEY` 는 이 repo
    고유 접두어로 — 기본값을 두면 `file://` 로 연 다른 교재와 진도가 섞인다), `index.html` 의 ▣ 채우기.
-   원본은 이 스킬의 기본 디렉터리 기준 `../textbook-html/templates/` 다. `BOOK` 은 확정된 장과 `(예정)` 장으로 채운다.
+   원본은 이 스킬의 기본 디렉터리 기준 `../textbook-html/templates/` 이고, 수식·공통 스타일 자산(`base.css`·`math.css`·`math.js`·`katex/`)은 `../../shared/` 에서 복사한다(textbook-html SKILL.md 절차 3). `BOOK` 은 확정된 장과 `(예정)` 장으로 채운다.
    textbook-html 은 "지시된 장만 처리"하므로 이 골격 작업은 상담이 맡는다.
 5. `authoring/03-진행-장부.md` 를 만들고 `## 장별 상태` 표를 넣는다(SKILL.md 의 계약 그대로).
    교재를 생략해도 장부는 만든다. 확정된 장마다 한 행을 넣는다 — 실습 `대기`, 답안 `공개 대기`,
