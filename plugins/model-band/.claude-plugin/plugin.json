@@ -1,7 +1,7 @@
 {
   "name": "model-band",
   "description": "프롬프트 바로 위에 현재 모델과 컨텍스트 사용률을 항상 표시하는 mod (80% 이상이면 경고 색)",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "jueon.park",
     "email": "bluegbgb@gmail.com"
