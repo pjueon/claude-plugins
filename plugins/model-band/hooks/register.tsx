@@ -10,7 +10,7 @@ const WARN_PERCENT = 80
 
 // claude-opus-5-5[1m] → Opus 5.5 (1M)
 export function prettyModel(id: string): string {
-  const m = /^claude-([a-z]+)-(\d+)(?:-(\d+))?(?:-\d{8})?(\[1m\])?$/i.exec(id)
+  const m = /^claude-([a-z]+)-(\d+)(?:-(\d{1,2}))?(?:-\d{8})?(\[1m\])?$/i.exec(id)
   if (!m) return id
   const name = m[1]!.charAt(0).toUpperCase() + m[1]!.slice(1)
   const version = m[3] ? `${m[2]}.${m[3]}` : m[2]

@@ -20,6 +20,7 @@ test('모델 id를 읽기 쉬운 이름으로 바꾼다', async () => {
   expect(prettyModel('claude-opus-5-5')).toBe('Opus 5.5')
   expect(prettyModel('claude-sonnet-5-5[1m]')).toBe('Sonnet 5.5 (1M)')
   expect(prettyModel('claude-haiku-4-5-20251001')).toBe('Haiku 4.5')
+  expect(prettyModel('claude-opus-5-20260101')).toBe('Opus 5')
   expect(prettyModel('Opus 5.5')).toBe('Opus 5.5')
   expect(formatTokens(84_000)).toBe('84k')
   expect(formatTokens(1_000_000)).toBe('1M')
