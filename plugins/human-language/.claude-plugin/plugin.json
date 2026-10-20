@@ -1,7 +1,7 @@
 {
   "name": "human-language",
   "description": "기계적인 AI 문체를 벗겨내고 상황과 장르에 맞는 인간다운 언어 지침을 설계·검수·학습하는 플러그인. 프로젝트 맞춤 언어 지침 생성(language-guideline), 3-Pass 기반 문체 검수 및 교정(review-writing-style), 사용자 피드백 오답 노트 누적(record-language-feedback)을 제공합니다.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "jueon.park",
     "email": "bluegbgb@gmail.com"
