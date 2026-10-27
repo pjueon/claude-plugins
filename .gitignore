@@ -196,3 +196,6 @@ pyrightconfig.json
 
 # Claude Code mod 로드 시 엔진이 생성하는 타입 파일
 plugins/*/.claude-plugin/types/
+
+# Claude Code 로컬 설정 (개인 PC별 권한 등)
+.claude/settings.local.json
