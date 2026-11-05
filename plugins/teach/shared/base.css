@@ -1,6 +1,7 @@
 /* 공통 부품 스타일 — textbook-html 과 explain-html 이 함께 쓰는 정본
    - 색 팔레트(:root)·본문 글꼴·제목·콜아웃(.box)·접는 상자·코드(토큰 색 포함)·표·그림 스타일
-   - 외부 폰트/CDN 의존 없음 (file:// 로 열려야 한다), 라이트/다크 자동 전환
+   - 외부 폰트/CDN 의존 없음 (file:// 로 열려야 한다)
+   - 라이트/다크는 <html data-theme> 로 고른다. 이 속성은 shared/theme.js 가 OS 설정이나 사용자가 고른 값으로 붙인다
    - textbook-html: docs/assets/base.css 로 복사해 book.css 보다 먼저 불러온다
    - explain-html: shared/inline-shared.js 가 원고의 teach:base-style 마커 주석 자리에 인라인한다
    - 색을 바꾸려면 아래 :root 변수만 만진다 */
@@ -33,37 +34,37 @@
   --c-dec: #7a5aa8;
   --c-self: #a33a33;
   --measure: 45rem;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16171a;
-    --bg-soft: #1b1d21;
-    --card: #1e2024;
-    --fg: #e3e0da;
-    --fg-strong: #f5f3ef;
-    --muted: #9b968d;
-    --rule: #2e3237;
-    --rule-soft: #262a2e;
-    --accent: #7fb3e0;
-    --accent-bg: #1b2a38;
-    --warn: #dda15e;
-    --warn-bg: #322a1e;
-    --good: #7ac496;
-    --good-bg: #1d2c24;
-    --bad: #e08b84;
-    --bad-bg: #33211f;
-    --code-bg: #191b1e;
-    --code-fg: #d8d5cf;
-    --hl-bg: rgba(221,161,94,.20);
-    --c-kw: #e089b8;
-    --c-str: #8fcfa5;
-    --c-com: #918d84;
-    --c-num: #dda15e;
-    --c-fn: #8fbce8;
-    --c-dec: #bfa2e8;
-    --c-self: #e08b84;
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #16171a;
+  --bg-soft: #1b1d21;
+  --card: #1e2024;
+  --fg: #e3e0da;
+  --fg-strong: #f5f3ef;
+  --muted: #9b968d;
+  --rule: #2e3237;
+  --rule-soft: #262a2e;
+  --accent: #7fb3e0;
+  --accent-bg: #1b2a38;
+  --warn: #dda15e;
+  --warn-bg: #322a1e;
+  --good: #7ac496;
+  --good-bg: #1d2c24;
+  --bad: #e08b84;
+  --bad-bg: #33211f;
+  --code-bg: #191b1e;
+  --code-fg: #d8d5cf;
+  --hl-bg: rgba(221,161,94,.20);
+  --c-kw: #e089b8;
+  --c-str: #8fcfa5;
+  --c-com: #918d84;
+  --c-num: #dda15e;
+  --c-fn: #8fbce8;
+  --c-dec: #bfa2e8;
+  --c-self: #e08b84;
 }
 
 * { box-sizing: border-box; }
@@ -214,3 +215,16 @@ figure.fig figcaption { font-size: .82rem; color: var(--muted); margin-top: .5re
 .svg-fg { fill: var(--fg); }
 .svg-muted { fill: var(--muted); }
 .svg-line { stroke: var(--rule); fill: none; }
+
+/* 테마 전환 버튼 — shared/theme.js 가 body 에 붙인다. 페이지와 함께 스크롤되어 본문을 가리지 않는다 */
+#theme-toggle {
+  position: absolute; top: .75rem; right: .75rem; z-index: 30;
+  width: 2.1rem; height: 2.1rem; padding: 0; display: grid; place-items: center;
+  background: var(--card); color: var(--muted); border: 1px solid var(--rule);
+  border-radius: 999px; cursor: pointer;
+}
+#theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+#theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* 좁은 화면: 위로 붙이고 줄여서 본문 첫 줄(상단 여백 2.6rem 이상)과 겹치지 않게 한다 */
+@media (max-width: 900px) { #theme-toggle { top: .45rem; right: .45rem; width: 1.9rem; height: 1.9rem; } }
+@media print { #theme-toggle { display: none; } }

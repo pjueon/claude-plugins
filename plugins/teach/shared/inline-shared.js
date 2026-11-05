@@ -5,6 +5,7 @@
 
    원고 안의 마커 주석을 아래 내용으로 바꾼다.
      <!-- teach:base-style -->   shared/base.css (공통 부품 스타일). 항상 필요하다
+     <!-- teach:theme-script --> shared/theme.js (라이트/다크 전환 버튼). 항상 필요하다
      <!-- teach:math-style -->   KaTeX CSS(글꼴은 data URI) + shared/math.css
      <!-- teach:math-script -->  katex.min.js + auto-render.min.js + math.js
    본문에 수식(\( … \), \[ … \])이 없으면 math 마커 둘은 그냥 지운다.
@@ -16,14 +17,17 @@ var DIR = __dirname;
 var BANNER = '/*! KaTeX v0.16.11 | MIT License | Copyright (c) 2013-2020 Khan Academy and other contributors | https://katex.org */\n';
 var MARK = {
   base: '<!-- teach:base-style -->',
+  theme: '<!-- teach:theme-script -->',
   mstyle: '<!-- teach:math-style -->',
   mscript: '<!-- teach:math-script -->'
 };
 var BLOCK = {
   base: ['style', 'base'],
+  theme: ['script', 'theme'],
   mstyle: ['style', 'math'],
   mscript: ['script', 'math']
 };
+var ALWAYS = { base: true, theme: true };   /* 수식 유무와 상관없이 인라인하는 마커 */
 
 function die(msg) { console.error('inline-shared: ' + msg); process.exit(1); }
 function read(rel) { return fs.readFileSync(path.join(DIR, rel), 'utf8'); }
@@ -43,6 +47,7 @@ function build() {
   var js = [read('katex/katex.min.js'), read('katex/auto-render.min.js'), read('math.js')].join(';\n');
   var out = {
     base: read('base.css'),
+    theme: read('theme.js'),
     mstyle: BANNER + css + '\n' + read('math.css'),
     mscript: BANNER + js
   };
@@ -77,14 +82,14 @@ function main() {
 
   var math = hasMath(html);
   Object.keys(MARK).forEach(function (k) {
-    var n = count(html, MARK[k]), need = k === 'base' || math;
+    var n = count(html, MARK[k]), need = ALWAYS[k] || math;
     if (need && n !== 1) die('마커 ' + MARK[k] + ' 가 ' + n + '개다(1개여야 한다)');
     if (!need && n > 1) die('마커 ' + MARK[k] + ' 가 ' + n + '개다(0~1개여야 한다)');
   });
 
   var parts = build();
   Object.keys(MARK).forEach(function (k) {
-    if (k !== 'base' && !math) { html = html.split(MARK[k]).join(''); return; }
+    if (!ALWAYS[k] && !math) { html = html.split(MARK[k]).join(''); return; }
     var tag = BLOCK[k][0], name = BLOCK[k][1];
     html = replaceOnce(html, MARK[k], '<' + tag + ' data-teach="' + name + '">\n' + parts[k] + '\n</' + tag + '>');
   });
