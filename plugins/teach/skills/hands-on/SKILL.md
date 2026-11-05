@@ -52,7 +52,7 @@ docs/               교재 HTML (textbook-html 이 장 단위로 추가)
 authoring/          00-기획 · 01-커리큘럼(정본) · 02-코드-정본(시그니처만) · 03-진행-장부(장별 상태) · _smoke.html
 code/               학습자가 작성하는 실습 코드(장을 거치며 누적)
 solutions/chNN/     답안공개 때 커밋하는 그 장 완료 시점의 모범 상태 스냅샷
-.teach/notes.md     AI 용 현재 상태 요약(커밋함). hands-on 소유, textbook-html 은 읽기만
+.teach/notes.md     AI 용 현재 상태 요약(커밋함). hands-on 소유. interview 는 이해도·오개념·열린 질문만 고친다. textbook-html 은 읽기만
 README.md           이 책을 읽는 방법
 ```
 
@@ -85,7 +85,7 @@ git author 는 모두 사용자다. Co-Authored-By 를 넣지 않는다. 한국�
 | [피드백] | 튜터 | 리뷰 요지(본문 3~6줄). 파일 변경이 없으면 --allow-empty |
 | [퀴즈] | 튜터 | 교재에 복습 퀴즈 추가·보강 |
 | [답안공개] | 튜터 | 자리표시자→모범답안 교체 + solutions/chNN/ + 장부 갱신 |
-| [노트] | 튜터 | .teach/notes.md 갱신 |
+| [노트] | 튜터(hands-on·interview) | .teach/notes.md 갱신 |
 
 세션 판정은 이 접두어로 git log 를 읽는다. 접두어 없는 커밋을 만들지 않는다.
 
