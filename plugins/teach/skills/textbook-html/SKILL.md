@@ -34,6 +34,7 @@ docs/                   독자에게 나가는 산출물만 둔다 (GitHub Pages
   assets/base.css       동봉본(shared 에서 복사). 공통 부품 스타일·색 팔레트(`:root` 변수)·코드 토큰 색
   assets/book.css       동봉본. 교재 런타임 전용 스타일. 손대지 않는다
   assets/book.js        동봉본. [교재별] 다섯 블록만 고친다
+  assets/theme.js       동봉본(shared 에서 복사). 라이트/다크 전환 버튼(자동·라이트·다크, 마지막 선택 기억). 손대지 않는다
   assets/math.js        동봉본(shared 에서 복사). 수식(KaTeX) 렌더 호출. 손대지 않는다
   assets/math.css       동봉본(shared 에서 복사). 수식 보정 스타일. 손대지 않는다
   assets/katex/         동봉본(shared 에서 복사). KaTeX 로컬 사본(CSS·JS·woff2 글꼴·라이선스). 손대지 않는다
@@ -137,7 +138,7 @@ solutions/chNN/         (같은 경우) 그 장 완료 시점의 모범 상태 �
 ```bash
 mkdir -p docs authoring
 cp -r <skill>/templates/assets       docs/assets
-cp    <skill>/../../shared/base.css <skill>/../../shared/math.css <skill>/../../shared/math.js docs/assets/
+cp    <skill>/../../shared/base.css <skill>/../../shared/theme.js <skill>/../../shared/math.css <skill>/../../shared/math.js docs/assets/
 cp -r <skill>/../../shared/katex     docs/assets/katex
 touch docs/.nojekyll
 cp    <skill>/templates/_smoke.html  authoring/_smoke.html
@@ -188,14 +189,14 @@ hands-on 이 부르면 **지시된 장만 처리하고 멈춘다.** `references/
 
 - 렌더는 `math.js` 가 `<main id="book">` 안에서 한 번 한다. 스크립트는 반드시 `book.js` 앞에 둔다.
 - 수식이 없는 교재는 `ch-template.html` 의 katex·math 줄(`<link>` 둘, `<script>` 셋)을 빼도 된다.
-- `base.css`·`math.css`·`katex/` 는 `shared/` 의 정본에서 골격 세우기 때 복사한 사본이다. 이미 만든 교재에서 `book.css` 만 새 버전으로 바꾸면 공통 부품 스타일(코드 토큰 색 포함)이 빠지므로, `base.css`·`math.css` 도 함께 복사하고 각 HTML 에 `<link>` 를 추가한다.
+- `base.css`·`theme.js`·`math.css`·`katex/` 는 `shared/` 의 정본에서 골격 세우기 때 복사한 사본이다. 이미 만든 교재에서 `book.css` 만 새 버전으로 바꾸면 공통 부품 스타일(코드 토큰 색 포함)이 빠지므로, `base.css`·`math.css` 도 함께 복사하고 각 HTML 에 `<link>` 를 추가한다. 다크 팔레트는 `theme.js` 가 붙이는 `<html data-theme>` 로 고르므로, 새 `base.css` 로 바꿀 때는 `theme.js` 도 복사하고 각 HTML 의 `<head>` 끝(스타일 뒤)에 `<script src="assets/theme.js"></script>` 를 넣는다. 빠지면 다크 모드가 나오지 않는다.
 
 ## 동봉 파일
 
 | 파일 | 무엇 |
 |---|---|
 | `templates/assets/book.css` | 교재 런타임 전용 스타일(라이트/다크). 공통 부품·팔레트는 `../../shared/base.css` |
-| `../../shared/katex/`, `math.js`, `math.css`, `base.css` | 골격 세우기 때 `docs/assets/` 로 복사하는 공유 자산(수식 렌더링·공통 스타일). 오프라인 `file://` 로 동작 |
+| `../../shared/katex/`, `math.js`, `math.css`, `base.css`, `theme.js` | 골격 세우기 때 `docs/assets/` 로 복사하는 공유 자산(수식 렌더링·공통 스타일·라이트/다크 전환). 오프라인 `file://` 로 동작 |
 | `templates/assets/book.js` | 런타임 — 목차·페이지 넘김·진행률·퀴즈 채점·탭·툴팁·페이지 참조 링크(이동·돌아가기)·하이라이터·진도 |
 | `templates/ch-template.html` | **페이지 서식의 진실 원천.** 쓸 수 있는 부품 전부 + 위젯 예시 |
 | `templates/index.html` | 표지·학습 트랙·목차 |

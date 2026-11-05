@@ -12,7 +12,7 @@ KaTeX(0.16.11, MIT 라이선스)는 이 폴더의 `katex/` 에 로컬 사본으�
 | `math.js` | 본문의 `\( … \)`·`\[ … \]` 를 KaTeX 로 그리는 호출. 루트는 `<main id="book">` 또는 `<main id="doc">` |
 | `math.css` | 수식 보정 스타일(`.katex` 크기, 별행 수식 넘침, 콜아웃 제목 안의 수식) |
 | `math.smoke.js` | 점검 함수 `mathCheck(root)`. 두 스킬의 probe 가 사본을 쓴다 |
-| `inline-shared.js` | explain-html 용. `base.css`·KaTeX·`math.js`·`math.css` 를 HTML 하나에 인라인한다 |
+| `inline-shared.js` | explain-html 용. `base.css`·`theme.js`·KaTeX·`math.js`·`math.css` 를 HTML 하나에 인라인한다 |
 
 두 스킬이 이 파일들을 가져가는 방식이 다르다.
 

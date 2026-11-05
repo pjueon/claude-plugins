@@ -54,7 +54,7 @@ function mathCheck(root) {
 
 window.addEventListener('load', function () {
   var r = [], d = document.documentElement, bad = 0, ans = [];
-  r.push('scheme=' + (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  r.push('scheme=' + (d.getAttribute('data-theme') || 'none'));
   r.push('pageOverflow=' + (d.scrollWidth - d.clientWidth));
   var pres = document.querySelectorAll('pre'), po = 0;
   pres.forEach(function (p) { if (p.scrollWidth - p.clientWidth > 1) po++; });

@@ -24,7 +24,7 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Skill, Agent
 
 - **E1 자체 완결 단일 HTML.** `templates/explain.html` 을 복사해 시작한다. CSS·JS 는
   인라인이고 `file://` 로 열려야 한다. CDN·외부 폰트·`fetch`·`type="module"` 을 쓰지 않는다
-  (textbook-html R2 와 같은 제약). 공통 스타일과 수식(KaTeX)은 원고에 마커 주석으로 두고,
+  (textbook-html R2 와 같은 제약). 공통 스타일·테마 전환과 수식(KaTeX)은 원고에 마커 주석으로 두고,
   마지막에 `../../shared/inline-shared.js` 가 HTML 안으로 인라인한다(절차 4). 수식은
   textbook-html 과 같은 LaTeX 로 쓴다(`../../shared/math.md`). 인라인 결과는 약 0.7MB 이고
   긴 줄이 생기므로 원고만 고치고 결과 파일은 직접 고치지 않는다.
@@ -60,7 +60,7 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Skill, Agent
    이 시점에 분량과 textbook-html 연계 여부를 판단한다.
 3. **원고 만들기.** `templates/explain.html` 을 scratchpad 에 복사해 `▣` 자리를 채운다.
    템플릿 안내 주석은 채우면서 지우되, `teach:` 로 시작하는 마커 주석(`teach:base-style`,
-   `teach:math-style`, `teach:math-script`)은 지우지 않는다. 템플릿은 이 스킬 폴더 기준 `templates/` 에 있다.
+   `teach:theme-script`, `teach:math-style`, `teach:math-script`)은 지우지 않는다. 템플릿은 이 스킬 폴더 기준 `templates/` 에 있다.
 4. **인라인.** `node <이 스킬 폴더>/../../shared/inline-shared.js <원고> <출력 위치(아래)의 파일>` 을
    돌려 단일 HTML 을 만든다. 본문에 수식이 없으면 수식 마커는 자동으로 지워진다. 원고를 고치면
    다시 돌린다.
@@ -101,7 +101,7 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Skill, Agent
 | `templates/explain.html` | 자체 완결 골격 — 목차·접는 배경·콜아웃·코드 하이라이팅·diff 줄 색·퀴즈·단계 위젯 예시 |
 | `references/sources.md` | 대상 종류별 근거 수집 방법, 실패 처리, 상세 절 구성 |
 | `references/checklist.md` | 저장 전 점검 — probe 스크립트, 내용 점검 |
-| `../../shared/` | teach 스킬 공통 기준·자산 — `writing-style.md`(문체), `visuals.md`(그림·위젯), `quiz.md`(퀴즈 계약), `math.md`(수식 규칙·점검), `highlight.md`(코드 하이라이팅 계약, `highlight.js` 정본은 템플릿에 사본), `base.css`·`katex/`·`math.js`·`math.css`(공통 스타일·수식, `inline-shared.js` 가 인라인) |
+| `../../shared/` | teach 스킬 공통 기준·자산 — `writing-style.md`(문체), `visuals.md`(그림·위젯), `quiz.md`(퀴즈 계약), `math.md`(수식 규칙·점검), `highlight.md`(코드 하이라이팅 계약, `highlight.js` 정본은 템플릿에 사본), `base.css`·`theme.js`·`katex/`·`math.js`·`math.css`(공통 스타일·라이트/다크 전환·수식, `inline-shared.js` 가 인라인) |
 
 ## 비목표
 
