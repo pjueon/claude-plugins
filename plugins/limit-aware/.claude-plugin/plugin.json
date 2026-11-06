@@ -1,0 +1,9 @@
+{
+  "name": "limit-aware",
+  "description": "Claude가 5시간·주간 사용 한도와 컨텍스트 잔량을 스스로 인지하게 하는 훅과 조회 스킬 (statusLine 수치를 훅이 구간 돌파 시에만 요약 주입)",
+  "version": "0.1.0",
+  "author": {
+    "name": "jueon.park",
+    "email": "bluegbgb@gmail.com"
+  }
+}
