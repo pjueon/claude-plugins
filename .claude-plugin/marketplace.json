@@ -39,7 +39,7 @@
     {
       "name": "model-band",
       "source": "./plugins/model-band",
-      "description": "프롬프트 바로 위 band에 현재 모델과 컨텍스트 사용률(80% 이상 경고 색)을 항상 표시하는 mod"
+      "description": "프롬프트 바로 위 band에 현재 모델·effort와 컨텍스트 사용률(80% 이상 경고 색)을 항상 표시하는 mod"
     },
     {
       "name": "limit-aware",
