@@ -5,6 +5,7 @@ import type { Context } from '../types'
 
 const model = atom({ plugin: 'model-band', key: 'model' } as const, null)
 const context = atom({ plugin: 'model-band', key: 'context' } as const, null)
+const effort = atom({ plugin: 'model-band', key: 'effort' } as const, null)
 
 const WARN_PERCENT = 80
 
@@ -50,10 +51,20 @@ export const register: Register = on => {
     return next(e)
   })
 
+  // 요청이 실제로 쓰는 effort. 서브에이전트 step(agentId 있음)은 제외
+  on('turn.step', async function* ($, e, next) {
+    if (e.agentId === undefined) {
+      const level = e.effort === undefined ? null : String(e.effort)
+      if (level !== (await read($, effort))) await update($, effort, () => level)
+    }
+    return yield* next(e)
+  })
+
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     const id = await read($, model)
     if (e.props.hasSurvey || id === null) return next(e)
 
+    const level = await read($, effort)
     const c = await read($, context)
     const { Box, Text } = $.ui.resolve(e)
     const isWarn = (c?.percent ?? 0) >= WARN_PERCENT
@@ -67,6 +78,7 @@ export const register: Register = on => {
         <Text color="claude" bold>
           {prettyModel(id)}
         </Text>
+        {level !== null && <Text dimColor>{` · ${level}`}</Text>}
         <Text dimColor> · </Text>
         <Text color={isWarn ? 'warning' : undefined} dimColor={!isWarn}>
           {ctx}
