@@ -40,6 +40,11 @@
       "name": "model-band",
       "source": "./plugins/model-band",
       "description": "프롬프트 바로 위 band에 현재 모델과 컨텍스트 사용률(80% 이상 경고 색)을 항상 표시하는 mod"
+    },
+    {
+      "name": "limit-aware",
+      "source": "./plugins/limit-aware",
+      "description": "Claude가 5시간·주간 사용 한도와 컨텍스트 잔량을 스스로 인지하게 하는 훅(구간 돌파 시에만 한 줄 주입)과 조회 스킬. 최초 1회 /limit-aware:setup 필요"
     }
   ]
 }
