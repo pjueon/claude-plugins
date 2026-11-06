@@ -131,6 +131,7 @@ class Decide(unittest.TestCase):
         text, patch = self.run_ev("SessionStart", s=s, source="compact", session={"context": ctx(90), "reported": {"context": 85}})
         self.assertNotIn("컨텍스트", text)
         self.assertEqual(patch["reported"]["context"], 0)
+        self.assertIsNone(patch["context"])  # 세션 파일의 compact 이전 값도 비운다
 
     def test_null_context_keeps_reported(self):
         s = snap(five=(10, at(14, 30)))

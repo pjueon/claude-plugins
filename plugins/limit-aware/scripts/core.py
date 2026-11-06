@@ -185,4 +185,7 @@ def decide(event, source, is_subagent, snapshot, session, now, tz):
         text = format_line(snapshot, ctx, now, tz)
     elif any(levels.get(k) is not None and levels[k] > reported.get(k, 0) for k in KEYS):
         text = format_line(snapshot, ctx, now, tz)
-    return text, {"reported": new_reported, "notified_no_snapshot": notified}
+    patch = {"reported": new_reported, "notified_no_snapshot": notified}
+    if event == "SessionStart" and source == "compact":
+        patch["context"] = None  # compact 이전 값이 다음 이벤트에서 재사용되지 않게 비운다
+    return text, patch

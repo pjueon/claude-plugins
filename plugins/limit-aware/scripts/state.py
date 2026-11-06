@@ -62,6 +62,8 @@ def update_session(sid, patch, now):
     if path is None or not patch:
         return
     data = read_json(path) or {"version": 1}
+    if all(data.get(k) == v for k, v in patch.items()) and data.get("version"):
+        return
     data.update(patch)
     data["updated_at"] = now
     write_json_atomic(path, data)

@@ -5,6 +5,7 @@ install: 기존 statusLine을 config.json에 보존하고, settings.json의 stat
 import argparse
 import json
 import os
+import re
 import shutil
 import sys
 import time
@@ -95,6 +96,11 @@ def cmd_status(path):
     print(f"스냅샷: {'없음' if seen is None else f'{int((time.time() - seen) // 60)}분 전 갱신'}")
     installed = state.home() / "statusline.py"
     print(f"복사본: {'있음' if installed.exists() else '없음'} (플러그인 업데이트 후에는 install을 다시 실행)")
+    if installed.exists():
+        m = re.search(r'^VERSION = "([^"]+)"', installed.read_text(encoding="utf-8"), re.M)
+        new = re.search(r'^VERSION = "([^"]+)"', SCRIPT.read_text(encoding="utf-8"), re.M)
+        if m and new and m.group(1) != new.group(1):
+            print(f"⚠ 복사본 버전 {m.group(1)} ≠ 플러그인 {new.group(1)}: install을 다시 실행하세요")
 
 
 def cmd_install(path):
@@ -103,9 +109,15 @@ def cmd_install(path):
     installed = state.home() / "statusline.py"
     new_settings, new_cfg = plan_install(settings, cfg, sys.executable, installed)
     _backup(path)
-    installed.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(SCRIPT, installed)
-    state.write_json_atomic(state.home() / "config.json", new_cfg)
+    try:
+        installed.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(SCRIPT, installed)
+    except OSError as e:
+        print(f"래퍼 복사에 실패해 중단했습니다(settings.json은 수정하지 않음): {e}")
+        return 1
+    if not state.write_json_atomic(state.home() / "config.json", new_cfg):
+        print("config.json 저장에 실패해 중단했습니다(settings.json은 수정하지 않음).")
+        return 1
     latest = _read_settings(path)  # 쓰기 직전에 다시 읽어 statusLine 키만 교체
     latest["statusLine"] = new_settings["statusLine"]
     _write_settings(path, latest)
@@ -113,6 +125,7 @@ def cmd_install(path):
     print(f"  전: {json.dumps(settings.get('statusLine'), ensure_ascii=False)}")
     print(f"  후: {json.dumps(latest['statusLine'], ensure_ascii=False)}")
     print(f"  중계: {json.dumps(new_cfg.get('wrapped'), ensure_ascii=False)}")
+    return 0
 
 
 def cmd_uninstall(path):
@@ -120,8 +133,11 @@ def cmd_uninstall(path):
     if cfg is None:
         print("config.json이 없어 되돌릴 원본 정보가 없습니다.")
         return 1
-    _backup(path)
     latest = _read_settings(path)
+    if not is_ours(latest.get("statusLine")):
+        print("현재 statusLine이 limit-aware 래퍼가 아니라서 복원하지 않았습니다.")
+        return 1
+    _backup(path)
     _write_settings(path, plan_uninstall(latest, cfg))
     print("원래 statusLine으로 복원했습니다.")
     return 0
@@ -138,7 +154,7 @@ def main():
         if args.command == "status":
             cmd_status(path)
         elif args.command == "install":
-            cmd_install(path)
+            return cmd_install(path)
         else:
             return cmd_uninstall(path)
     except ValueError as e:

@@ -203,6 +203,16 @@ class SetupTests(Env):
         self.assertEqual(r.returncode, 1)
         self.assertEqual(settings.read_text(encoding="utf-8"), "{bad")
 
+    def test_uninstall_refuses_when_statusline_changed(self):
+        settings = Path(self.tmp.name) / "settings.json"
+        settings.write_text(json.dumps({"statusLine": {"command": "orca.cmd"}}), encoding="utf-8")
+        _run("setup.py", "install", "--settings", str(settings))
+        changed = {"statusLine": {"command": "other.cmd"}}
+        settings.write_text(json.dumps(changed), encoding="utf-8")
+        r = _run("setup.py", "uninstall", "--settings", str(settings))
+        self.assertEqual(r.returncode, 1)
+        self.assertEqual(json.loads(settings.read_text(encoding="utf-8")), changed)
+
 
 if __name__ == "__main__":
     unittest.main()

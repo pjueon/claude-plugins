@@ -22,6 +22,7 @@ Claude Code가 자신의 5시간 한도, 주간 한도, 현재 세션의 컨텍�
 
 ## 한계
 
+- Python 3가 `python` 명령으로 실행돼야 한다(macOS·Linux에서 `python3`만 있다면 alias가 필요).
 - `rate_limits`는 Pro/Max 구독자에게만, 세션의 첫 응답 이후부터 제공된다. 그 외에는 컨텍스트만 표시된다.
 - statusLine은 대화형 TUI에서만 실행되므로 헤드리스(`-p`)에서는 수치가 갱신되지 않는다.
 - 상태 파일: 세션별 파일은 SessionEnd에 삭제되고, SessionStart에서 3일 넘은 파일을 정리한다.
