@@ -1,7 +1,7 @@
 {
   "name": "tdd",
-  "description": "TDD(RED→GREEN→REFACTOR) 오케스트레이션 스킬(tdd, tdd-loop)과 단계별 서브에이전트(tdd-planner/red/green/refactor/docs)",
-  "version": "2.0.1",
+  "description": "TDD(RED→GREEN→REFACTOR) 오케스트레이션 스킬(tdd, tdd-loop)과 단계별 서브에이전트(tdd-planner/cycle/red/green/refactor/docs). 난이도 S/M/L에 따라 에이전트 구성을 간소화",
+  "version": "2.1.0",
   "author": {
     "name": "jueon.park",
     "email": "bluegbgb@gmail.com"
